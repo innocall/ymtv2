@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/px82"
+    android:layout_gravity="center"
+    android:gravity="center"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <TextView
+            android:id="@+id/lemon95_menu_item"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/px82"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:textColor="#b3aeae"
+            android:textSize="@dimen/px36" />
+
+        <ImageView
+            android:id="@+id/lemon95_rig"
+            android:layout_width="@dimen/px16"
+            android:layout_height="@dimen/px30"
+            android:src="@drawable/live_rig"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            android:visibility="gone"
+            android:layout_marginRight="@dimen/px20"/>
+    </RelativeLayout>
+
+
+</LinearLayout>

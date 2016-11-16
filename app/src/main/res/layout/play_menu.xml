@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/lemon95_menu_end"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent"
+    android:layout_gravity="end"
+    android:background="#b1000000"
+    android:orientation="horizontal">
+
+
+    <LinearLayout
+        android:layout_width="@dimen/px308"
+        android:layout_height="match_parent"
+        android:background="@drawable/live_bg2"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/lemon95_menus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/px100"
+            android:textColor="#b3aeae"
+            android:textSize="@dimen/px50" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/px2"
+            android:layout_marginRight="@dimen/px2"
+            android:layout_marginTop="@dimen/px30"
+            android:background="#6b6b6b"></View>
+
+        <com.wx.wheelview.widget.WheelView
+            android:id="@+id/sub_wheelview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="@dimen/px20"
+            android:cacheColorHint="#00000000"
+            android:listSelector="#00000000" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="@dimen/px254"
+        android:layout_height="match_parent"
+        android:background="@drawable/live_bg1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/lemon95_menu_item"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/px100"
+            android:text="@string/lemon95_menu"
+            android:textColor="#b3aeae"
+            android:textSize="@dimen/px50" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/px2"
+            android:layout_marginTop="@dimen/px30"
+            android:background="#6b6b6b"></View>
+
+        <com.wx.wheelview.widget.WheelView
+            android:id="@+id/main_wheelview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="@dimen/px20"
+            android:cacheColorHint="#00000000"
+            android:listSelector="#00000000" />
+
+
+        <!--android:cacheColorHint="#00000000"
+        android:listSelector="#00000000"-->
+    </LinearLayout>
+</LinearLayout>

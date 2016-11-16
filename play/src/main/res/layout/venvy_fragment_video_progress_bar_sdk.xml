@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#000000"
+    android:clickable="true" >
+
+    <ProgressBar
+        android:id="@+id/sdk_ijk_progress_bar"
+        android:layout_width="@dimen/px120"
+        android:layout_height="@dimen/px120"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:indeterminateBehavior="repeat"
+        android:indeterminateDrawable="@drawable/venvy_video_sdk_ijk_progress_bar_bg"
+        android:indeterminateOnly="true" />
+
+    <ImageView
+        android:id="@+id/sdk_ijk_progress_bar_logo"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:visibility="gone"/>
+
+    <TextView
+        android:id="@+id/sdk_ijk_progress_bar_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/sdk_ijk_progress_bar"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:layout_marginTop="@dimen/px30"
+        android:lineSpacingExtra="10dp"
+        android:lineSpacingMultiplier="1.2"
+        android:text="@string/sdk_video_connect_server_text"
+        android:textColor="#fff"
+        android:textSize="@dimen/px36" />
+
+</RelativeLayout>

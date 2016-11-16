@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="@dimen/px249"
+              android:layout_height="@dimen/px426"
+              android:orientation="vertical"
+              android:paddingTop="@dimen/px24">
+
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <RelativeLayout
+            android:layout_width="@dimen/px249"
+            android:layout_height="@dimen/px336">
+
+            <ImageView
+                android:id="@+id/lemon_grid_img"
+                android:layout_width="@dimen/px249"
+                android:layout_height="@dimen/px336"
+                android:scaleType="fitXY"
+                android:src="@drawable/lemon_details_small_def">
+            </ImageView>
+
+            <TextView
+                android:id="@+id/lemon_title"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/px50"
+                android:layout_alignParentBottom="true"
+                android:layout_gravity="center_vertical"
+                android:background="#b00b0505"
+                android:paddingLeft="@dimen/px10"
+                android:textColor="@color/lemon_dcdcdc"
+                android:textSize="@dimen/px36"
+                android:visibility="gone"/>
+        </RelativeLayout>
+
+        <com.lemon95.androidtvwidget.view.LabelView xmlns:lv="http://schemas.android.com/apk/res-auto"
+                                                   android:id="@+id/lemon_image_icon"
+                                                    android:layout_width="wrap_content"
+                                                    android:layout_height="wrap_content"
+                                                    android:layout_gravity="left"
+                                                    android:paddingLeft="5dp"
+                                                    android:paddingRight="5dp"
+                                                    android:visibility="gone"
+                                                    lv:lv_background_color="#e11320"
+                                                    lv:lv_fill_triangle="true"
+                                                    lv:lv_gravity="TOP_LEFT"
+                                                    lv:lv_text="NEW"
+                                                    lv:lv_text_size="15sp"/>
+    </FrameLayout>
+
+
+    <TextView
+        android:id="@+id/lemon_grid_textView"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/px72"
+        android:layout_gravity="bottom|center"
+        android:ellipsize="marquee"
+        android:gravity="center"
+        android:marqueeRepeatLimit="marquee_forever"
+        android:scrollHorizontally="true"
+        android:singleLine="true"
+        android:textAlignment="center"
+        android:textColor="@color/lemon_dcdcdc"
+        android:textSize="@dimen/px36"/>
+
+</LinearLayout>

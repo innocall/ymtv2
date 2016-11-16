@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/px82"
+    android:gravity="center_vertical"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/lemon95_menu_item"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="left"
+        android:layout_marginLeft="@dimen/px24"
+        android:layout_marginTop="@dimen/px10"
+        android:ellipsize="marquee"
+        android:marqueeRepeatLimit="marquee_forever"
+        android:layout_marginRight="@dimen/px15"
+        android:scrollHorizontally="true"
+        android:singleLine="true"
+        android:textColor="#b3aeae"
+        android:textSize="@dimen/px36" />
+
+    <TextView
+        android:id="@+id/lemon95_menu_item_next"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_marginLeft="@dimen/px24"
+        android:layout_marginTop="@dimen/px10"
+        android:layout_marginBottom="@dimen/px10"
+        android:ellipsize="marquee"
+        android:marqueeRepeatLimit="marquee_forever"
+        android:scrollHorizontally="true"
+        android:layout_marginRight="@dimen/px15"
+        android:singleLine="true"
+        android:textColor="#b3aeae"
+        android:textSize="@dimen/px22" />
+
+</LinearLayout>

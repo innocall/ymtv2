@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@null"
+    android:orientation="vertical">
+
+    <ImageView
+        android:id="@+id/msg_pause"
+        android:layout_width="@dimen/px200"
+        android:layout_height="@dimen/px200"
+        android:src="@drawable/icon_pause"
+        android:visibility="gone"
+        android:layout_centerInParent="true"/>
+
+    <LinearLayout
+        android:layout_width="@dimen/px500"
+        android:layout_height="@dimen/px180"
+        android:background="@drawable/lemon95_live_msg"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginRight="@dimen/px180"
+        android:layout_marginBottom="@dimen/px135"
+        android:gravity="center_vertical"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/lemon95_new"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/px36"
+            android:layout_marginLeft="@dimen/px30"
+            android:layout_marginRight="@dimen/px30"
+            android:ellipsize="marquee"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:scrollHorizontally="true"
+            android:singleLine="true"
+            android:textColor="#FFF"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/px3"
+            android:layout_marginBottom="@dimen/px10"
+            android:layout_marginTop="@dimen/px10"
+            android:layout_marginLeft="@dimen/px1"
+            android:layout_marginRight="@dimen/px1"
+            android:background="#029be8"></View>
+
+        <TextView
+            android:id="@+id/lemon95_next"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/px36"
+            android:layout_marginLeft="@dimen/px30"
+            android:layout_marginRight="@dimen/px30"
+            android:ellipsize="marquee"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:scrollHorizontally="true"
+            android:singleLine="true"
+            android:textColor="#b3aeae"/>
+    </LinearLayout>
+
+</RelativeLayout>

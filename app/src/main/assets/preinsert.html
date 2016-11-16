@@ -1,0 +1,1550 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="height=device-height,initial-scale=1, maximum-scale=1">
+    <title></title>
+
+    <!-- <script src="adController_android.js"></script> -->
+    <style type="text/css">
+        * { padding:0; margin:0;}
+        body{
+            margin:0px auto;
+        }
+        .poster {
+            vertical-align:middle;
+            width:100%;
+            max-height:100%;
+            max-width:100%;
+            height:100%;
+        }
+        .con_div{
+            width: 100%;
+            text-align:center;
+            vertical-align:middle;
+            color:#000;
+        }
+        .iframeDiv{
+            position:absolute;
+            filter:alpha(Opacity=80);
+            z-index:100;
+            width:100%;
+            height:100%;
+        }
+        .float_div{
+            position:absolute;
+            float:right;
+            z-index:100;
+            width:75px;
+            height:75px;
+            right:0;
+            top:0;
+            background-image:url(http://ad-cache.dopool.com/ad/AdSale/html_api/bg_video_ad_timer.png);
+        }
+        .vip_div{
+            position:absolute;
+            float:right;
+            z-index:100;
+            width:75px;
+            height:75px;
+            right:0;
+            top:0;
+            margin-right: 75px;
+        }
+        .vip_con{
+            position:absolute;
+            z-indent:2;
+            left:0;
+            top:0;
+        }
+        .close_div{
+            position:absolute;
+            float:right;
+            z-index:100;
+            right:0;
+            top:0;
+            text-align: right;
+        }
+        .back{
+            position:absolute;
+            float:left;
+            z-index:100;
+            left:0;
+            top:0;
+        }
+        .timer{
+            color:#fff;
+            position:absolute;
+            z-indent:2;
+            left:0;
+            top:0;
+        }
+
+    </style>
+</head>
+<body>
+<div class="con_div" id="con_div">
+    <div id="close" class="close_div">
+        <img id="close_img" onclick="AdJsServerController.closeImg()" src="http://ad-cache.dopool.com/ad/AdSale/html_api/close.png">
+    </div>
+    <div onclick="AdJsServerController.downloadapp()" id="iframeDiv" class="iframeDiv" style="display:none;"></div>
+    <iframe id="iframe" width="100%" height="100%" style="display:none" src=""></iframe>
+    <!--<img onclick="AdJsServerController.downloadapp()" id="ad_img" src="" class="poster" >-->
+    <div id="ad_img_wrapper"></div>
+    <img style="display:none" id="start_ad_img" src="" class="poster" >
+    <input id="ad_location" type="hidden" value="">
+    <input id="app_name" type="hidden" value="">
+    <input id="app_iscancel" type="hidden" value="">
+    <input id="location_type" type="hidden" value="">
+    <input id="user_imp" type="hidden" value="">
+    <input id="user_clk" type="hidden" value="">
+    <input id="third_imp" type="hidden" value="">
+    <input id="third_clk" type="hidden" value="">
+    <input id="sm_clk" type="hidden" value="">
+    <input id="orderid" type="hidden" value="">
+    <input id="order_params" type="hidden" value="">
+</div>
+</body>
+<script>
+
+var adtypes = {
+    startloading: 'startapp',
+    loading: 'pre_play',
+    banner: 'banner',
+    preinsert: 'interstitial'
+};
+
+try{
+
+
+var $ = function (selector) {
+    var obj;
+    var isclass = false;
+    var str = selector.substr(1);
+    if(selector.indexOf(".") >= 0){
+        isclass = true;
+        obj = document.getElementsByClassName(str);
+    }else{
+        obj = document.getElementById(str);
+    }
+    //console.log(obj)
+    var jquery = {
+        "val":function(){
+            if(arguments[0] != undefined){
+                obj.value = arguments[0];
+            }
+            return obj.value;
+        },
+        "attr":function(){
+            if(arguments.length > 1){
+                obj.setAttribute(arguments[0], arguments[1])
+            }
+            return obj.getAttribute(arguments[0]);
+        },
+        "css":function(){
+            if(isclass){
+                for (var i = 0; i < obj.length; i++) {
+                    if(arguments.length == 2){
+                        obj[i].style[arguments[0]] = arguments[1]
+                    }
+                };
+                return obj[0].style[arguments[0]];
+            }else{
+                if(arguments.length == 2){
+                    obj.style[arguments[0]] = arguments[1]
+                }
+                return obj.style[arguments[0]];
+            }
+        },
+        "html":function(){
+            if(arguments[0] != undefined){
+                obj.innerHTML = arguments[0];
+            }
+            return obj.innerHTML;
+
+        }
+    }
+    return jquery;
+}
+
+var common = common || (function(){
+
+    //Base64压缩算法js实现
+    var Base64 = {
+        // private property
+        _keyStr : "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=",
+
+        // public method for encoding
+        encode : function (input) {
+            var output = "";
+            var chr1, chr2, chr3, enc1, enc2, enc3, enc4;
+            var i = 0;
+
+            input = Base64._utf8_encode(input);
+
+            while (i < input.length) {
+
+                chr1 = input.charCodeAt(i++);
+                chr2 = input.charCodeAt(i++);
+                chr3 = input.charCodeAt(i++);
+
+                enc1 = chr1 >> 2;
+                enc2 = ((chr1 & 3) << 4) | (chr2 >> 4);
+                enc3 = ((chr2 & 15) << 2) | (chr3 >> 6);
+                enc4 = chr3 & 63;
+
+                if (isNaN(chr2)) {
+                    enc3 = enc4 = 64;
+                } else if (isNaN(chr3)) {
+                    enc4 = 64;
+                }
+                output = output +
+                this._keyStr.charAt(enc1) + this._keyStr.charAt(enc2) +
+                this._keyStr.charAt(enc3) + this._keyStr.charAt(enc4);
+
+            }
+            return output;
+        },
+        // public method for decoding
+        decode : function (input) {
+            var output = "";
+            var chr1, chr2, chr3;
+            var enc1, enc2, enc3, enc4;
+            var i = 0;
+            input = input.replace(/[^A-Za-z0-9\+\/\=]/g, "");
+            while (i < input.length) {
+                enc1 = this._keyStr.indexOf(input.charAt(i++));
+                enc2 = this._keyStr.indexOf(input.charAt(i++));
+                enc3 = this._keyStr.indexOf(input.charAt(i++));
+                enc4 = this._keyStr.indexOf(input.charAt(i++));
+
+                chr1 = (enc1 << 2) | (enc2 >> 4);
+                chr2 = ((enc2 & 15) << 4) | (enc3 >> 2);
+                chr3 = ((enc3 & 3) << 6) | enc4;
+                output = output + String.fromCharCode(chr1);
+                if (enc3 != 64) {
+                    output = output + String.fromCharCode(chr2);
+                }
+                if (enc4 != 64) {
+                    output = output + String.fromCharCode(chr3);
+                }
+            }
+            output = Base64._utf8_decode(output);
+            return output;
+        },
+        // private method for UTF-8 encoding
+        _utf8_encode : function (string) {
+            string = string.replace(/\r\n/g,"\n");
+            var utftext = "";
+            for (var n = 0; n < string.length; n++) {
+                var c = string.charCodeAt(n);
+                if (c < 128) {
+                    utftext += String.fromCharCode(c);
+                }
+                else if((c > 127) && (c < 2048)) {
+                    utftext += String.fromCharCode((c >> 6) | 192);
+                    utftext += String.fromCharCode((c & 63) | 128);
+                }
+                else {
+                    utftext += String.fromCharCode((c >> 12) | 224);
+                    utftext += String.fromCharCode(((c >> 6) & 63) | 128);
+                    utftext += String.fromCharCode((c & 63) | 128);
+                }
+            }
+            return utftext;
+        },
+
+        // private method for UTF-8 decoding
+        _utf8_decode : function (utftext) {
+            var string = "";
+            var i = 0;
+            var c = c1 = c2 = 0;
+            while ( i < utftext.length ) {
+                c = utftext.charCodeAt(i);
+                if (c < 128) {
+                    string += String.fromCharCode(c);
+                    i++;
+                }
+                else if((c > 191) && (c < 224 )) {
+                    c2 = utftext.charCodeAt(i+1);
+                    string += String.fromCharCode(((c & 31) << 6) | (c2 & 63));
+                    i += 2;
+                }
+                else {
+                    c2 = utftext.charCodeAt(i+1);
+                    c3 = utftext.charCodeAt(i+2);
+                    string += String.fromCharCode(((c & 15) << 12) | ((c2 & 63) << 6) | (c3 & 63));
+                    i += 3;
+                }
+            }
+            return string;
+        }
+    }
+
+    //Localstorage的重写
+    var localstorage = {
+        "getItem" : function(key){
+            var info  =  AdInterface.getPhoneInfo()
+            info = JSON.parse(info);
+            var app_ver = info['app_ver'] !=  undefined ? info['app_ver'] : info['appver'];;
+            key = app_ver + "_" + key;
+            var res;
+            if(typeof(AdInterface) !=  "undefined" && "getDataCache" in AdInterface){
+                res = AdInterface.getDataCache(key)
+                if(res == "undefined"){
+                    res = undefined;
+                }
+            }else{
+                res = locallocalstorage.getItem(key);
+            }
+            return res;
+        },
+        "setItem" : function(key, value){
+            var info = AdInterface.getPhoneInfo()
+            info = JSON.parse(info);
+            var app_ver = info['app_ver'] !=  undefined ? info['app_ver'] : info['appver'];;
+            key = app_ver + "_" + key;
+            if(typeof(AdInterface) !=  "undefined" && "setDataCache" in AdInterface){
+                res = AdInterface.setDataCache(key, value);
+            }else{
+                res = locallocalstorage.setItem(key, value);
+            }
+        },
+        "removeItem" : function(key){
+            var info = AdInterface.getPhoneInfo()
+            info = JSON.parse(info);
+            var app_ver = info['app_ver'] !=  undefined ? info['app_ver'] : info['appver'];;
+            key = app_ver + "_" + key;
+            if(typeof(AdInterface) !=  "undefined" && "removeDataCache" in AdInterface){
+                AdInterface.removeDataCache(key);
+            }else{
+                locallocalstorage.removeItem(key);
+            }
+        }
+    };
+
+    var paramsToJson = function(params){
+        var data = params.split("&");
+        var res = {};
+        for(var i=0, iLoop = data.length; i < iLoop; i++){
+            var tmp = data[i].split("=");
+            res[tmp[0]] = tmp[1];
+        }
+        return res;
+    };
+
+    //判断对象是否为空
+    var isEmpty = function(obj){
+        for (var name in obj){
+            return false;
+        }
+        return true;
+    };
+
+    /**
+     *
+     * 往url后面添加参数,支持多个参数
+     *
+     * @param String url
+     *
+     * @param Object params
+     *
+     * @param Object params ...
+     *
+     * @return String url 返回添加完参数的url
+     *
+     * 用法：
+     * 输入 addparams('url.com', {a: 'a'}, {b: 'b'})
+     * 输出 'url.com?a=a&b=b'
+     */
+
+    var addParams = function(){
+
+        var args = [].slice.call(arguments);
+
+        var url = '';
+        if( args[0]){
+            url = /\?/.test(args[0]) ? args[0] + '&' : args[0] + '?';
+        }
+
+        var ps = [];
+
+        for(var i = 1; i < args.length; i++){
+            for(var key in args[i]){
+                if(args[i].hasOwnProperty(key)){
+                    ps.push(encodeURIComponent(key) + '=' + encodeURIComponent(args[i][key]));
+                }
+            }
+        }
+
+        url += ps.join('&');
+
+        return url;
+    };
+
+    function getDate(date){
+        var myDate = date ? (new Date(date)) : (new Date());
+
+        var arr = [];
+        arr.push(myDate.getFullYear());
+        arr.push(myDate.getMonth() + 1);
+        arr.push(myDate.getDate());
+
+        return arr.join('-');
+    }
+
+    function isString(obj){
+        return typeof obj === 'string';
+    }
+
+    function isUndefined(obj){
+        return typeof obj === 'undefined' || obj === 'undefined';
+    }
+
+    function isDefined(obj){
+        return !isUndefined(obj);
+    }
+
+   function checkDayNum(data, index, adDate){
+        var dayNum = common.getItem("dayNum");
+        var res = true;
+        if(typeof(dayNum) == "string" && dayNum !== "undefined"){
+            var dayNumObj = JSON.parse(dayNum);
+            if(typeof(dayNumObj[adDate]) !=="undefined" ){
+                var orderDayNum = dayNumObj[adDate][data[index]['ORDERID']];
+                if(orderDayNum !== "undefined" && data[index]['DAY_NUM'] > 0 && orderDayNum >= data[index]['DAY_NUM']){
+                    res = true;
+                }else{
+                    res = false;
+                }
+            }else{
+                var dayNumStr = '{"' + adDate + '":{}}';
+                common.setItem("dayNum", dayNumStr);
+                res = false;
+            }
+        }else{
+            var dayNumStr = '{"' + adDate + '":{}}';
+            common.setItem("dayNum", dayNumStr);
+            res = false;
+        }
+        return res;
+    }
+
+    function isExpired(timestamp){
+        var now = (new Date()).getTime();
+        var dif = timestamp ? now - timestamp : 0;
+        return dif > 1000*60*30;
+    }
+
+    function appverToNum(appver){
+        appver = appver.replace(".", "");
+        res = appver[0] + '.' + appver.substr(1, appver.length);
+        return parseFloat(res);
+    }
+
+    function extend(){
+        var args = [].slice.call(arguments);
+        var target = args[0] || {};
+        var source = args[1];
+
+        for(var prop in source){
+            target[prop] = source[prop];
+        }
+        if(args.length > 2){
+            args[0] = target;
+            console.log('argsa=', args);
+            args.splice(1, 1);
+            console.log('argsb=', args);
+            extend.apply(this, args);
+        }
+
+        return target;
+    }
+
+    return {
+        Base64: Base64,
+        getItem: localstorage.getItem,
+        setItem: localstorage.setItem,
+        removeItem: localstorage.removeItem,
+        isEmpty: isEmpty,
+        paramsToJson: paramsToJson,
+        addParams: addParams,
+        getDate: getDate,
+        isString: isString,
+        isUndefined: isUndefined,
+        isDefined: isDefined,
+        checkDayNum: checkDayNum,
+        isExpired: isExpired,
+        appverToNum: appverToNum,
+        extend: extend
+    };
+
+})();
+
+var ClientInterface = ClientInterface || (function(){
+
+    function getPhoneInfo(){
+        if(common.isDefined(AdInterface) && common.isDefined(AdInterface.getPhoneInfo)){
+            return AdInterface.getPhoneInfo()
+        }else{
+            return HuDongJSInterface.getPhoneInfo();
+        }
+    }
+
+    function getDataCache(key){
+        return AdInterface.getDataCache(key);
+    }
+
+    function setDataCache(key, value){
+        AdInterface.setDataCache(key, value);
+    }
+
+    function removeDataCache(key){
+        AdInterface.removeDataCache(key);
+    }
+
+    function downloadApp(app_url, app_name){
+        AdInterface.downloadApp(app_url, app_name);
+    }
+
+    function forceDownloadApp(app_url, app_name){
+        AdInterface.forceDownloadApp(app_url, app_name);
+    }
+
+    function openNewTablet(str, url, num){
+        AdInterface.openNewTablet(str, url, num);
+    }
+
+    function back(){
+        AdInterface.back();
+    }
+
+    function show(tag){
+        log('adtest ' + tag, 'AdInterface.show')
+        AdInterface.show();
+    }
+
+    function hide(tag){
+        log('adtest ' + tag, 'AdInterface.hide');
+        AdInterface.hide();
+    }
+
+    function getHdtData(){
+        return AdInterface.getHdtData();
+    }
+
+    function getApi(url){
+        return AdInterface.getApi(url);
+    }
+
+    function noAds(tag){
+        log('adtest ' + tag, 'AdInterface.noads');
+        AdInterface.noAds();
+    }
+
+    function sendApi(dataApi, eventName, adParams){
+        AdInterface.sendApi(dataApi, eventName, adParams);
+    }
+
+    function sendAdData(dataApi, eventName, adParams){
+        try{
+
+            if(common.isUndefined(AdInterface.sendAdData)){
+                AdInterface.sendApi(dataApi, eventName, adParams);
+            }else{
+                AdInterface.sendAdData(dataApi, eventName, adParams);
+            }
+
+        }catch(e){
+            console.log('commonjs error' , e);
+            log('adtest common.js error', e.name + ':' + e.message);
+        }
+    }
+
+    function getCurrentPlay(){
+        return JSON.parse(AdInterface.getCurrentPlay());
+    }
+
+
+
+
+    function showAds(ads, tag){
+        log('adtest ' + tag, 'AdInterface.showAds,ads=' + ads);
+        AdInterface.showAds(ads);
+    }
+
+    function getIflyTek(){
+        return AdInterface.getIflyTek();
+    }
+
+    /**
+     * requestUrl
+     * 异步网络请求,执行回调函数
+     *
+     * @param String setting 请求的参数设置,类型为JSON格式的字符串
+     * {
+     *
+     *  url: String,        必填    请求的url ('http://url.com')
+     *
+     *  method: String,     必填    请求的方法，不区分大小写 ('GET' | 'POSt' | 'get' | 'post' )
+     *
+     *  params: Object,     选填    请求的参数, method是get的时候，已字符串的形式添加到url后面,
+     *                              例如: {a: 'aaa', b: 'bbb'},转化后为'http://url.com?a=aaa&b=bbb'
+     *
+     *  headers: Object,    选填    请求头添加属性（'{"adid":"a1cd2ooderf4","adKey":"W5KGUA2P"}'）
+     *
+     *  timeout: Number,    选填    超时时间，单位秒，不传的话默认值5秒
+     *
+     *  success: String,    必填    请求成功的回调函数，参数为请求的返回内容
+     *                              例如success值为：'request.succesCallback',
+     *                              执行时候要传入返回内容request.successCallback(data)
+     *
+     *  error: String,      必填    请求失败的回调函数，类似于success
+     *
+     *  base64: Boolean     选填    (true | false)返回结果是否需要base64解密,true时需要先解密，默认值为false
+     *
+     * }
+     */
+    function requestUrl(setting){
+        if(!common.isString(setting)){
+            setting = JSON.stringify(setting);
+        }
+
+        //向前兼容没有requestUrl方法的版本
+        if(common.isUndefined(AdInterface.requestUrl)){
+
+            setting = JSON.parse(setting);
+            console.log('no requestUrl' );
+
+            var data = AdInterface.getApi(setting.url);
+
+            data = setting.base64 ? common.Base64.decode(data) : data;
+
+            if(data == 'undefined'){
+                console.log('no requestUrl without data');
+                _getFunctionFromString(setting['error'])(data);
+            }else{
+                console.log('no requestUrl with data',  setting['success']);
+                _getFunctionFromString(setting['success'])(data);
+            }
+
+        }else{
+            AdInterface.requestUrl(setting);
+        }
+    }
+
+    //获取字符串形式的函数对象
+    function _getFunctionFromString (string, scope){
+        var scope = scope || window;
+        var scopeSplit = string.split('.');
+        for (i = 0; i < scopeSplit.length - 1; i++){
+            scope = scope[scopeSplit[i]];
+
+            if (scope == undefined) return;
+        }
+
+        return scope[scopeSplit[scopeSplit.length - 1]];
+    }
+
+    function blockAd(){
+        AdInterface.backAd();
+    }
+
+    function log(tag, msg){
+        AdInterface.log(tag, msg);
+    }
+    return {
+        getPhoneInfo: getPhoneInfo,
+        getDataCache: getDataCache,
+        setDataCache: setDataCache,
+        removeDataCache: removeDataCache,
+        downloadApp: downloadApp,
+        forceDownloadApp: forceDownloadApp,
+        openNewTablet: openNewTablet,
+        back: back,
+        show: show,
+        hide: hide,
+        getHdtData: getHdtData,
+        getApi: getApi,
+        noAds: noAds,
+        sendApi: sendApi,
+        sendAdData: sendAdData,
+        getCurrentPlay: getCurrentPlay,
+        showAds: showAds,
+        getIflyTek: getIflyTek,
+
+        requestUrl: requestUrl,
+        blockAd: blockAd,
+        log: log
+    };
+})();
+
+}catch(e){
+    ClientInterface.log('adtest common.js error', e.name + ':' + e.message);
+}
+
+
+window.onerror = function(message, source, lineno, colno, error){
+    ClientInterface.log('adtest preinsert', message
+            + ':'
+            + JSON.stringify(error)
+            + ' on line '
+            + lineno
+            + ':'
+            + colno
+            + ',source='
+            + source);
+}
+
+var api_url="http://ad.dopool.com/ad/Adv/api.php";
+//var api_url="http://test.adapi.starschina.com/Adv/api.php";
+var dataApi="http://ad-data.starschina.com";
+
+
+var adDate=common.getDate();
+var adInfo;
+var thirdTrack={};
+var win_width=300;
+var win_height=250;
+var predata={};
+var crontab_lock=true;
+
+var waitTime=5;
+var duration=600;
+var show_time=60;
+
+var data;
+var ad;
+var preinsert;
+var b_index;
+var viewType;
+var viewId;
+
+var adData;
+var tag = 'preinsert'
+
+//后台功能,用于前台背景控制
+var AdJsServerController = {
+    //adpage: ADPag对象
+    //session: 该页面的唯一标示
+    mainFunction : function(){
+        ClientInterface.log('adtest preinsert', 'mainFunction start');
+        var adpage=ClientInterface.getCurrentPlay();
+        var info=common.getItem("phoneInfo")
+            if(info==undefined){
+                info=(typeof(ClientInterface)!="undefined" && "getPhoneInfo" in ClientInterface)?ClientInterface.getPhoneInfo():HuDongJSInterface.getPhoneInfo();
+                common.setItem("phoneInfo",info);
+            }
+
+        var clientParams=eval("("+info+")");
+        var name=adpage['name'];
+        var params=name!='SearchViewController'?adpage['params']:{}
+        var ad_screen=adpage['screen'].split('X');
+        //ClientInterface.log(adpage['screen'])
+        clientParams['width']=ad_screen[0];
+        clientParams['height']=ad_screen[1];
+        //win_height=ad_screen[1]*(3/4);
+        //win_width=win_height*(1.2);
+        if(ad_screen[0]>ad_screen[1]){
+            win_height=ad_screen[1]*(3/4);
+            win_width=win_height*(1.2);
+        }else{
+            win_height=ad_screen[0]*(1/2);
+            win_width=win_height*(1.2);
+        }
+        var allads;//=ClientInterface.getDataCache("allads");
+        if(typeof(allads)=="string" && allads!="undefined"){
+            var allads=JSON.parse(allads);
+            AdJsServerController.getadData(allads);
+            ClientInterface.setDataCache("allads","undefined");
+        }
+        //var preinsert_ad=
+        this.getPreinsert(clientParams,name,params);
+    },
+    getadData:function(str){
+        var time=new Date();
+        var timeExpires=time.getTime().toString();
+        //前插屏广告
+        var preInsertData=new Array();
+        if(str['DATA']['ADVIEW_PREINSERT']!=undefined){
+            str['DATA']['ADVIEW_PREINSERT']['ORDERID']='adview_preinsert';
+            str['DATA']['ADVIEW_PREINSERT']['PARAMS']=common.paramsToJson(str['DATA']['ADVIEW_PREINSERT']['PARAMS']);
+            preInsertData.push(str['DATA']['ADVIEW_PREINSERT']);
+        }
+        if(str['DATA']['IFLYTEK_PREINSERT']!=undefined){
+            str['DATA']['IFLYTEK_PREINSERT']['ORDERID']='iflytek_preinsert';
+            str['DATA']['IFLYTEK_PREINSERT']['PARAMS']=common.paramsToJson(str['DATA']['IFLYTEK_PREINSERT']['PARAMS']);
+            preInsertData.push(str['DATA']['IFLYTEK_PREINSERT']);
+        }
+        common.setItem('preinsert',JSON.stringify({"type":"preinsert","data":preInsertData}));
+        common.setItem('preinsert_expires',timeExpires);
+        common.setItem('preinsert_index',"0");
+
+        //loading 广告
+        loadData={'loading':[]};
+        if(Object.prototype.toString.call(str['DATA']['LOADING'])=='[object Object]'){
+            for (var key in str['DATA']['LOADING']) {
+                str['DATA']['LOADING'][key]['ORDERID']=key;
+                str['DATA']['LOADING'][key]['PARAMS']=common.paramsToJson(str['DATA']['LOADING'][key]['PARAMS']);
+                loadData['loading'].push(str['DATA']['LOADING'][key]);
+            }
+        }
+        loadData['adchina']=str['DATA']['ADCHINA'];
+        loadData['adchina_video']=str['DATA']['ADCHINA_VIDEO'];
+        loadData['adtouch']=str['DATA']['ADTOUCH'];
+        loadData['admob']=str['DATA']['ADMOB'];
+        loadData['bailin_loading']=str['DATA']['BAILIN_LOADING'];
+        common.setItem('loading',JSON.stringify(loadData));
+        common.setItem('loading_expires',timeExpires);
+        common.setItem('loading_index',"0");
+
+
+        //开机图广告
+        if(Object.prototype.toString.call(str['DATA']['STARTLOADING'])=='[object Object]'){
+            if(str['DATA']['STARTLOADING']['ICON']!=undefined){
+                var resData=str['DATA']['STARTLOADING'];
+                resData['STATISTURL']=str['DATA']['STATISTURL']
+                common.setItem('startloading',JSON.stringify(resData));
+            }
+        }
+
+        var resData=str['DATA'];
+        var bannerData=new Array();
+        var dopool_banner={};
+        if(!common.isEmpty(resData['BANNER_V2']) && Object.prototype.toString.call(resData['BANNER_V2'])=='[object Object]'){
+
+            for (var key in resData['BANNER_V2']) {
+                resData['BANNER_V2'][key]['ORDERID']=key;
+                resData['BANNER_V2'][key]['PARAMS']=common.paramsToJson(resData['BANNER_V2'][key]['PARAMS']);
+                bannerData.push(resData['BANNER_V2'][key]);
+            };
+        }
+        dopool_banner['type']='banner';
+        dopool_banner['data']=bannerData;
+        common.setItem('banner',JSON.stringify(dopool_banner));
+        common.setItem('banner_expires',timeExpires);
+        common.setItem('banner_index',"0");
+
+    },
+    getPreinsert:function(clientParams,name,params){
+
+        ad=false;
+        data=common.getItem("preinsert");
+        var preinsert_expires=common.getItem("preinsert_expires");
+        var videoType=params.videoType;
+        viewId=(videoType=='0' || videoType=='11')?'vod':params.videoId;
+        var now=new Date().getTime();
+        var dif=preinsert_expires!==undefined?now-preinsert_expires:0;
+        if(name=='ActivePlayerViewController'){
+            viewType='VIDEOIDS';
+        }else if(name=='ColumnHomeViewController'){
+            viewType='SHOWIDS';
+        }else{
+            viewType='VIDEOIDS';
+        }
+        var searchView=name=='SearchViewController'?true:false;
+        if(data===null || data===undefined || dif>1000*60*30){
+            var url = common.addParams(api_url, {a: 'getallads'}, clientParams);
+
+            ClientInterface.log('adtest preinert', 'before requesturl');
+            ClientInterface.requestUrl({
+                url:url,
+                method:'get',
+                timeout:5,
+                base64: true,
+                success:'AdJsServerController.getAdDataSuccess',
+                error:'AdJsServerController.getAdDataError'
+            });
+        }else{
+            AdJsServerController.afterGetData();
+        }
+    },
+    //请求第三方广告接口
+    getThreeAd:function(adName){
+        var info=ClientInterface.getPhoneInfo(),
+        adApi,adAid,adAppId,pkgName,headers,params,
+        secretKey='rvluw8afjg9tpvi7uz87ozcjtk01rta4';
+        info=JSON.parse(info);
+        //获取时间戳
+        //var myDate = new Date();
+        var time=parseInt(new Date().getTime()/1000);
+        //获取网络信息
+        var net=info['net'].toUpperCase();
+        var inet=2;
+        if(net=='WIFI'){
+            inet=2;
+        }else if(net=='3G'){
+            inet=5;
+        }else if(net=='4G'){
+            inet=6;
+        }
+
+        pkgName = info['pkgname'];
+        return ad_name(adName);
+
+        function ad_name(adName) {
+            //科大讯飞
+            if( adName == 'ifly'){
+                //var iflyApi="http://ws.voiceads.cn/ad/request";
+                adApi = "http://ws.voiceads.cn/ad/request";
+                //                adAid = "00510F891E51FBD9336E68C4122FBC39";
+                //                adAppId = "56b212bf";
+                adAppId = "56246771";
+                headers={"X-protocol-ver":"2.0"};
+                pkgName = 'dopool.player';
+
+                //不同应用渠道
+                switch (info['app_key']){
+                    //手机电视SDK
+                    case 'ZTI3ODgzZDZkOWY2':
+                        adAid = '58D980691FAD7E0B30830808BED827CB';
+                        break;
+                        //小米视频
+                    case 'N2M4ZWUxODhmZGE3':
+                        adAid = '50DF86CE815B00F44AD0AB2AF7DD8292';
+                        break;
+                        //百度视频
+                        //                    case 'MzczNmU1M2Q3NTQw':
+                    case 'Yjg1NjNiYmY2MjFj':                   //测试KEY
+                        adAid = 'B6032F899C49F4736A7B9B2165C182E6';
+                        break;
+                        //2345
+                    case 'ZDliYjk1YTMyZGQ5':
+                        adAid = '39612DFE9BF74FE5EBD07DB37E97296B';
+                        break;
+                }
+
+                //ios没有pkgname,ua,ip
+                params={
+                    "adunitid": adAid,
+                    "appid": adAppId,
+                    "orientation": "1",
+                    "devicetyp": "0",
+                    "appname": "dopool",
+                    //                    "pkgname": "dopool.player",
+                    "pkgname": pkgName,
+                    "adw": "500",
+                    "adh": "600",
+                    "batch_cnt": "1",
+                    "vendor": "Apple",
+                    "os": "Android",
+                    "model": info['dmodel'],
+                    "osv": info['osver'],
+                    //                    "dvh": devHeight,
+                    //                    "dvw": devWidth,
+                    "dvh": 200,
+                    "dvw": 300,
+                    "net": inet,
+                    "imei":info['imei'],
+                    "openudid":info['openudid'],
+                    "ts": time
+                };
+
+                //GET:0 POST:1
+                ClientInterface.requestUrl({
+                    url:adApi,
+                    method:'post',
+                    params:params,
+                    headers:headers,
+                    timeout:5,
+                    success:'AdJsServerController.getIflyDataSuccess',
+                    error:'AdJsServerController.getIflyDataError'
+                });
+            }
+            //快友
+            if( adName == 'adView'){
+                //headers={"Accept-Encoding":"gzip"};
+                headers={};
+                adApi = "http://open.adview.cn/agent/openRequest.do";
+
+                //pkgName = 'com.baidu.video'; //测试用数据
+
+                //不同应用渠道
+                switch (info['app_key']){
+                    //手机电视SDK
+                    case 'ZTI3ODgzZDZkOWY2':
+                        adAid = 'SDK20161126110201o3ptst5sn453dj1';
+                        break;
+                        //小米视频
+                    case 'N2M4ZWUxODhmZGE3':
+                        adAid = 'SDK201611261102554goi6ssu6q3ld1u';
+                        break;
+                        //百度视频
+                        //                    case 'MzczNmU1M2Q3NTQw':
+                    case 'Yjg1NjNiYmY2MjFj': //测试KEY
+                        //                            adAid = 'SDK20161126110237tkocdqs3c9v75ul';
+                        adAid = 'SDK20161126110201o3ptst5sn453dj1';
+                        break;
+                        //2345
+                    case 'ZDliYjk1YTMyZGQ5':
+                        adAid = 'SDK20161126110237zj624y510ysix1l';
+                        break;
+                }
+
+                params={
+                    "n": 1,
+                    "appid": adAid,
+                    "pt": 1,
+                    "w": 300,
+                    "h": 250,
+                    "ip": "",
+                    "os": 0,
+                    "bdr": info['osver'],//操作系统版本号
+                    "tp":info['dmodel'],//设备型号
+                    "sn": info['imei'],//设备的唯一标识
+                    "nt":info['net'],//设备联网类型
+                    "nop":'',//手机运营商代号
+                    "tm": 0,
+                    "pack": pkgName,//媒体的包名，即本app的包名
+                    "time": time,
+                    "andid": info['android_id'],
+                    "token": md5(adAid+info['imei']+'0'+''+pkgName+time+secretKey)
+                };
+
+                ClientInterface.requestUrl({
+                    url:adApi,
+                    method:'get',
+                    params:params,
+                    headers:headers,
+                    timeout:5,
+                    success:'AdJsServerController.getAdviewDataSuccess',
+                    error:'AdJsServerController.getAdviewDataError'
+                });
+            }
+
+        }
+
+    },
+    getAdDataSuccess:function(res){
+        ClientInterface.log('adtest preinsert', 'getAdDataSuccess;data=' + data);
+
+        if(typeof(res)=="string" && res.indexOf("CODE")==-1){
+            var str=eval("("+res+")");
+
+            if(str!=undefined ){
+                AdJsServerController.getadData(str);
+                data=common.getItem("preinsert");
+                AdJsServerController.afterGetData();
+            }else{
+                common.removeItem('preinsert');
+            }
+        }
+    },
+    afterGetData:function(){
+        ClientInterface.log('adtest preinsert','afterGetData;data='+data);
+
+        if(data!==undefined && data!==null){
+
+            if(typeof(data)=='string'){
+                data=JSON.parse(data);
+            }
+            //                console.log(data);
+            if(data['data'].length>0){
+                preinsert=data['data'];
+                var length=data['data'].length;
+
+                var index=0;
+                var preinsert_index=typeof(common.getItem("preinsert_index"))=='string'?parseInt(common.getItem("preinsert_index")):undefined;
+                if(preinsert_index>=length || preinsert_index==undefined){
+                    index=0;
+                }else{
+                    index=preinsert_index;
+                }
+                var tmp_index=index;
+                var orderId=0;
+                var indexArr=new Array();
+                b_index=0;
+                for(var i =index; i <length; i++){
+                    if(viewType!==undefined){
+                        var viewIds=','+preinsert[i][viewType]+',';
+                        var excludevideoids=preinsert[i]['EXCLUDE']!=undefined?','+preinsert[i]['EXCLUDE']+',':"";
+                        if(viewIds.indexOf(','+viewId+',')!==-1 || (preinsert[i][viewType]=='all' && excludevideoids.indexOf(','+viewId+',')==-1)){
+                            try
+                            {
+                                var isInstall=ADJsClientController.isAppInstalled(preinsert[i]['PACKAGE_NAME'])
+                                    if(isInstall){
+                                        continue;
+                                    }
+                            }catch(e){
+                            }
+                            if(orderId===0){
+                                orderId=preinsert[i]['ORDERID'];
+                                index=parseInt(i)+1;
+                                b_index=i;
+                                common.setItem('preinsert_index',index.toString());
+                            }
+                        }
+                    }
+                }
+                if(orderId==0 && tmp_index>0){
+                    for (var j = 0; j < tmp_index; j++) {
+                        if(viewType!==undefined){
+                            var viewIds=','+preinsert[j][viewType]+',';
+
+                            var excludevideoids=preinsert[j]['EXCLUDE']!=undefined?','+preinsert[j]['EXCLUDE']+',':"";
+                            if(viewIds.indexOf(','+viewId+',')!==-1 || (preinsert[j][viewType]=='all' && excludevideoids.indexOf(','+viewId+',')==-1)){
+
+                                try
+                                {
+                                    var isInstall=ADJsClientController.isAppInstalled(preinsert[i]['PACKAGE_NAME'])
+                                        if(isInstall){
+                                            continue;
+                                        }
+                                }catch(e){
+                                }
+                                //判断是否满足每日点击
+                                if(common.checkDayNum(preinsert,j,adDate)){
+                                    continue;
+                                }
+                                if(orderId===0){
+                                    orderId=preinsert[j]['ORDERID'];
+                                    index=parseInt(j)+1;
+                                    b_index=j;
+                                    common.setItem('preinsert_index',index.toString());
+                                }
+                            }
+                        }
+                    }
+                }
+                if(orderId!==0){
+                    preinsert[b_index]['PARAMS']['videoid']=viewId;
+                    //var adData;
+                    switch (orderId){
+                        case 'iflytek_preinsert':
+                            ClientInterface.log('iflytek_preinsert')
+                                AdJsServerController.getThreeAd('ifly');
+
+                            break;
+                        case 'adview_preinsert':
+                            ClientInterface.log('AdJsServerController.getThreeAd(adView)');
+                            AdJsServerController.getThreeAd('adView');
+                            break;
+                    }
+
+                }else{
+                    ClientInterface.noAds(tag);
+                    return true;
+                }
+            }
+
+        }
+    },
+    getAdDataError:function(error){
+        ClientInterface.log('getAdDataError:' + error.toString());
+    },
+    //科大讯飞
+    getIflyDataSuccess:function(adData){
+
+        //            var preinsert=data['data'];
+        ClientInterface.log('getIflyDataSuccess==='+adData);
+        adData=JSON.parse(adData);
+
+        if(adData && adData['rc']!=undefined && adData['rc']=='70200'){
+            ad={
+                'type':'iflytek_preinsert',
+                'icon':adData['batch_ma'][0]['image'], //图片地址
+                'location':adData['batch_ma'][0]['landing_url'],//链接地址
+                'location_type':adData['batch_ma'][0]['adtype']=='redirect'?0:1, //链接地址 类型：0网页 1下载
+                'impr_url':adData['batch_ma'][0]['impr_url'],//上报 第三方曝光数据 地址
+                'click_url':adData['batch_ma'][0]['click_url'], //上报 第三方点击的地址
+                'orderid':'iflytek_preinsert',
+                'params':preinsert[b_index]['PARAMS'] //上报数据参数
+            };
+
+            ad['dataApi']=dataApi;
+            predata=ad;
+            this.crontabStartShow();
+        }else{
+            ClientInterface.noAds(tag);
+            return true;
+        }
+    },
+    getIflyDataError:function(error){
+        ClientInterface.log('getIflyDataError:'+error);
+        ClientInterface.noAds(tag);
+    },
+    //快友
+    getAdviewDataSuccess:function(adData){
+        //            var preinsert=data['data'];
+        ClientInterface.log('getAdviewDataSuccess'+adData);
+        adData=JSON.parse(adData);
+        var impUrl = [];
+        if(adData && adData['res']!=undefined && adData['res']=='1'){
+            for(var m in adData['ad'][0]['es']){
+                impUrl = impUrl.concat(adData['ad'][0]['es'][m]);
+            }
+            ad={
+                'type':'adview_preinsert',
+                'icon':adData['ad'][0]['api'],
+                'location':adData['ad'][0]['al'],
+                'location_type':adData['ad'][0]['act']==1?0:1,
+
+                'impr_url':impUrl,
+                'click_url':adData['ad'][0]['ec'],
+                'orderid':'adview_preinsert',
+                'params':preinsert[b_index]['PARAMS']  //上报数据参数
+            };
+
+            ad['dataApi']=dataApi;
+            predata=ad;
+            this.crontabStartShow();
+        }else{
+            ClientInterface.log('getAdviewData no ads');
+            ClientInterface.noAds(tag);
+            return true;
+        }
+    },
+    getAdviewDataError:function(error){
+        ClientInterface.log('getAdviewDataError:'+error);
+        ClientInterface.noAds(tag);
+    },
+    closeImg:function(){
+        var adParams=predata['params'];
+        ClientInterface.sendAdData(dataApi,'ad_close',JSON.stringify(adParams));
+        ClientInterface.hide()
+    },
+    closepreinsert:function(){
+        return function()
+        {
+            ClientInterface.hide()
+        }
+    },
+    downloadapp:function(){
+        ClientInterface.log('adtest preinsert', 'downloadapp start')
+        var cloud = arguments[0]?arguments[0]:0;
+        var url=$("#ad_location").val();
+        if(url==""){
+            return false;
+        }
+        var adParams=predata['params'];
+
+        var location_type=$("#location_type").val();
+        if(predata['click_url']!=undefined){
+            for(var i in predata['click_url']){
+                ClientInterface.log('downloadapp click_url' + predata['click_url'][i]);
+                ClientInterface.requestUrl({
+                    url:predata['click_url'][i],
+                    method:"get",
+                    timeout:5
+                });
+            }
+        }
+        var orderid=$("#orderid").val();
+        var app_name=$("#app_name").val() || parseInt(Math.random() * 1000) + '_adview.apk';
+        var app_iscancel=$("#app_iscancel").val() || 0;
+        ClientInterface.log('location_type' + location_type);
+        //location_type ;0是打开网页，1是下载app
+        if(location_type=="0" ){
+                ClientInterface.sendAdData(dataApi,'adclick',JSON.stringify(adParams));
+                ClientInterface.openNewTablet('',url,20000*1);
+        }else{
+            ClientInterface.sendAdData(dataApi,'adclick',JSON.stringify(adParams));
+            if(cloud===0){
+                if(app_iscancel=='1'){
+                    ClientInterface.forcedDownloadApp(url,app_name);
+                }else{
+                    ClientInterface.downloadApp(url,app_name);
+                }
+            }
+        }
+        ClientInterface.hide();
+    },
+    
+    adexposure:function(adParams){
+        var now=new Date().getTime();
+        ClientInterface.log('adtest preinsert', 'adexposure');
+        if(predata['impr_url'].length>0){
+            for(var i in predata['impr_url']){
+                ClientInterface.log('adtest preinsert', 'adexposure' + i + 'url=' + predata['impr_url'][i]);
+                var param_exposure = {
+                    url:predata['impr_url'][i],
+                    method:'get',
+                    timeout:5
+                };
+
+                ClientInterface.requestUrl(param_exposure);
+
+            }
+        }
+        AdInterface.sendAdData(dataApi,'adexposure',JSON.stringify(adParams));
+    },
+
+    sendUrl:function(url){
+        try{
+            //$.getJSON(url)
+            var script = document.createElement('script');
+            script.src = url;
+            document.body.appendChild(script);
+        }catch(e){
+            //console.log(e.message());
+        }
+    },
+    init:function() {
+        ClientInterface.log('init predata'+predata);
+        if(predata['type']!==undefined && predata['icon']!=''){
+            /*
+               # 展示广告图片
+             */
+            //ClientInterface.log(win_width+'--'+win_height);
+            $("#con_div").css('width',parseInt(win_width)+"px");
+            $("#con_div").css('height',parseInt(win_height)+"px")
+                //ClientInterface.log(parseInt(win_width)+'x'+parseInt(win_height))
+                $("#close_img").css('width',parseInt(win_height)*0.1+"px");
+            $("#close_img").css('height',parseInt(win_height)*0.1+"px");
+            //初始化图片和跳转地址
+            //$("#ad_img").attr('src',predata['icon']);
+            var img = new Image();
+            img.onload = function(){
+                //报展示数据
+                AdJsServerController.adexposure(predata['params']);
+                ClientInterface.show(tag);
+            };
+            img.onclick = function(){
+                AdJsServerController.downloadapp();
+            };
+            img.classList.add('poster');
+            img.src = predata['icon'];
+            document.getElementById('ad_img_wrapper').innerHTML = '';
+            document.getElementById('ad_img_wrapper').appendChild(img);
+
+            $("#ad_location").val(predata['location']);
+            //初始化广告跳转类型
+            $("#location_type").val(predata['location_type']);
+            $("#orderid").val(predata['orderid']);
+        }
+    },
+    crontabStartShow:function(){
+        /*
+           ## 上报广告展示数据
+         */
+        ClientInterface.log('上报广告展示数据');
+
+        if(crontab_lock){
+
+            setTimeout(function(){AdJsServerController.crontabStartShow()},1000*waitTime);
+            crontab_lock=false;
+        }else{
+
+            crontab_lock=true;
+            ClientInterface.log('predata icon'+predata['icon']);
+
+            if(predata['icon']){
+                //展示广告
+                var adexParams=predata['params'];
+                $("#order_params").val(JSON.stringify(adexParams));
+                ClientInterface.log('before adexposure');
+
+                ClientInterface.log('after adexposure');
+
+                ClientInterface.showAds(JSON.stringify(predata), tag);
+                AdJsServerController.init();
+                //ClientInterface.show(tag);
+
+            }
+
+            waitTime=duration;
+            //console.log('duration--'+show_time);
+            setTimeout(AdJsServerController.closepreinsert(),1000*show_time);
+            setTimeout(function(){AdJsServerController.mainFunction();},1000*show_time);
+        }
+    }
+
+};
+
+//MD5加密算法
+function md5(string){
+    function md5_RotateLeft(lValue, iShiftBits) {
+        return (lValue<<iShiftBits) | (lValue>>>(32-iShiftBits));
+    }
+    function md5_AddUnsigned(lX,lY){
+        var lX4,lY4,lX8,lY8,lResult;
+        lX8 = (lX & 0x80000000);
+        lY8 = (lY & 0x80000000);
+        lX4 = (lX & 0x40000000);
+        lY4 = (lY & 0x40000000);
+        lResult = (lX & 0x3FFFFFFF)+(lY & 0x3FFFFFFF);
+        if (lX4 & lY4) {
+            return (lResult ^ 0x80000000 ^ lX8 ^ lY8);
+        }
+        if (lX4 | lY4) {
+            if (lResult & 0x40000000) {
+                return (lResult ^ 0xC0000000 ^ lX8 ^ lY8);
+            } else {
+                return (lResult ^ 0x40000000 ^ lX8 ^ lY8);
+            }
+        } else {
+            return (lResult ^ lX8 ^ lY8);
+        }
+    }
+    function md5_F(x,y,z){
+        return (x & y) | ((~x) & z);
+    }
+    function md5_G(x,y,z){
+        return (x & z) | (y & (~z));
+    }
+    function md5_H(x,y,z){
+        return (x ^ y ^ z);
+    }
+    function md5_I(x,y,z){
+        return (y ^ (x | (~z)));
+    }
+    function md5_FF(a,b,c,d,x,s,ac){
+        a = md5_AddUnsigned(a, md5_AddUnsigned(md5_AddUnsigned(md5_F(b, c, d), x), ac));
+        return md5_AddUnsigned(md5_RotateLeft(a, s), b);
+    };
+    function md5_GG(a,b,c,d,x,s,ac){
+        a = md5_AddUnsigned(a, md5_AddUnsigned(md5_AddUnsigned(md5_G(b, c, d), x), ac));
+        return md5_AddUnsigned(md5_RotateLeft(a, s), b);
+    };
+    function md5_HH(a,b,c,d,x,s,ac){
+        a = md5_AddUnsigned(a, md5_AddUnsigned(md5_AddUnsigned(md5_H(b, c, d), x), ac));
+        return md5_AddUnsigned(md5_RotateLeft(a, s), b);
+    };
+    function md5_II(a,b,c,d,x,s,ac){
+        a = md5_AddUnsigned(a, md5_AddUnsigned(md5_AddUnsigned(md5_I(b, c, d), x), ac));
+        return md5_AddUnsigned(md5_RotateLeft(a, s), b);
+    };
+    function md5_ConvertToWordArray(string) {
+        var lWordCount;
+        var lMessageLength = string.length;
+        var lNumberOfWords_temp1=lMessageLength + 8;
+        var lNumberOfWords_temp2=(lNumberOfWords_temp1-(lNumberOfWords_temp1 % 64))/64;
+        var lNumberOfWords = (lNumberOfWords_temp2+1)*16;
+        var lWordArray=Array(lNumberOfWords-1);
+        var lBytePosition = 0;
+        var lByteCount = 0;
+        while ( lByteCount < lMessageLength ) {
+            lWordCount = (lByteCount-(lByteCount % 4))/4;
+            lBytePosition = (lByteCount % 4)*8;
+            lWordArray[lWordCount] = (lWordArray[lWordCount] | (string.charCodeAt(lByteCount)<<lBytePosition));
+            lByteCount++;
+        }
+        lWordCount = (lByteCount-(lByteCount % 4))/4;
+        lBytePosition = (lByteCount % 4)*8;
+        lWordArray[lWordCount] = lWordArray[lWordCount] | (0x80<<lBytePosition);
+        lWordArray[lNumberOfWords-2] = lMessageLength<<3;
+        lWordArray[lNumberOfWords-1] = lMessageLength>>>29;
+        return lWordArray;
+    };
+    function md5_WordToHex(lValue){
+        var WordToHexValue="",WordToHexValue_temp="",lByte,lCount;
+        for(lCount = 0;lCount<=3;lCount++){
+            lByte = (lValue>>>(lCount*8)) & 255;
+            WordToHexValue_temp = "0" + lByte.toString(16);
+            WordToHexValue = WordToHexValue + WordToHexValue_temp.substr(WordToHexValue_temp.length-2,2);
+        }
+        return WordToHexValue;
+    };
+    function md5_Utf8Encode(string){
+        string = string.replace(/\r\n/g,"\n");
+        var utftext = "";
+        for (var n = 0; n < string.length; n++) {
+            var c = string.charCodeAt(n);
+            if (c < 128) {
+                utftext += String.fromCharCode(c);
+            }else if((c > 127) && (c < 2048)) {
+                utftext += String.fromCharCode((c >> 6) | 192);
+                utftext += String.fromCharCode((c & 63) | 128);
+            } else {
+                utftext += String.fromCharCode((c >> 12) | 224);
+                utftext += String.fromCharCode(((c >> 6) & 63) | 128);
+                utftext += String.fromCharCode((c & 63) | 128);
+            }
+        }
+        return utftext;
+    };
+    var x=Array();
+    var k,AA,BB,CC,DD,a,b,c,d;
+    var S11=7, S12=12, S13=17, S14=22;
+    var S21=5, S22=9 , S23=14, S24=20;
+    var S31=4, S32=11, S33=16, S34=23;
+    var S41=6, S42=10, S43=15, S44=21;
+    string = md5_Utf8Encode(string);
+    x = md5_ConvertToWordArray(string);
+    a = 0x67452301; b = 0xEFCDAB89; c = 0x98BADCFE; d = 0x10325476;
+    for (k=0;k<x.length;k+=16) {
+        AA=a; BB=b; CC=c; DD=d;
+        a=md5_FF(a,b,c,d,x[k+0], S11,0xD76AA478);
+        d=md5_FF(d,a,b,c,x[k+1], S12,0xE8C7B756);
+        c=md5_FF(c,d,a,b,x[k+2], S13,0x242070DB);
+        b=md5_FF(b,c,d,a,x[k+3], S14,0xC1BDCEEE);
+        a=md5_FF(a,b,c,d,x[k+4], S11,0xF57C0FAF);
+        d=md5_FF(d,a,b,c,x[k+5], S12,0x4787C62A);
+        c=md5_FF(c,d,a,b,x[k+6], S13,0xA8304613);
+        b=md5_FF(b,c,d,a,x[k+7], S14,0xFD469501);
+        a=md5_FF(a,b,c,d,x[k+8], S11,0x698098D8);
+        d=md5_FF(d,a,b,c,x[k+9], S12,0x8B44F7AF);
+        c=md5_FF(c,d,a,b,x[k+10],S13,0xFFFF5BB1);
+        b=md5_FF(b,c,d,a,x[k+11],S14,0x895CD7BE);
+        a=md5_FF(a,b,c,d,x[k+12],S11,0x6B901122);
+        d=md5_FF(d,a,b,c,x[k+13],S12,0xFD987193);
+        c=md5_FF(c,d,a,b,x[k+14],S13,0xA679438E);
+        b=md5_FF(b,c,d,a,x[k+15],S14,0x49B40821);
+        a=md5_GG(a,b,c,d,x[k+1], S21,0xF61E2562);
+        d=md5_GG(d,a,b,c,x[k+6], S22,0xC040B340);
+        c=md5_GG(c,d,a,b,x[k+11],S23,0x265E5A51);
+        b=md5_GG(b,c,d,a,x[k+0], S24,0xE9B6C7AA);
+        a=md5_GG(a,b,c,d,x[k+5], S21,0xD62F105D);
+        d=md5_GG(d,a,b,c,x[k+10],S22,0x2441453);
+        c=md5_GG(c,d,a,b,x[k+15],S23,0xD8A1E681);
+        b=md5_GG(b,c,d,a,x[k+4], S24,0xE7D3FBC8);
+        a=md5_GG(a,b,c,d,x[k+9], S21,0x21E1CDE6);
+        d=md5_GG(d,a,b,c,x[k+14],S22,0xC33707D6);
+        c=md5_GG(c,d,a,b,x[k+3], S23,0xF4D50D87);
+        b=md5_GG(b,c,d,a,x[k+8], S24,0x455A14ED);
+        a=md5_GG(a,b,c,d,x[k+13],S21,0xA9E3E905);
+        d=md5_GG(d,a,b,c,x[k+2], S22,0xFCEFA3F8);
+        c=md5_GG(c,d,a,b,x[k+7], S23,0x676F02D9);
+        b=md5_GG(b,c,d,a,x[k+12],S24,0x8D2A4C8A);
+        a=md5_HH(a,b,c,d,x[k+5], S31,0xFFFA3942);
+        d=md5_HH(d,a,b,c,x[k+8], S32,0x8771F681);
+        c=md5_HH(c,d,a,b,x[k+11],S33,0x6D9D6122);
+        b=md5_HH(b,c,d,a,x[k+14],S34,0xFDE5380C);
+        a=md5_HH(a,b,c,d,x[k+1], S31,0xA4BEEA44);
+        d=md5_HH(d,a,b,c,x[k+4], S32,0x4BDECFA9);
+        c=md5_HH(c,d,a,b,x[k+7], S33,0xF6BB4B60);
+        b=md5_HH(b,c,d,a,x[k+10],S34,0xBEBFBC70);
+        a=md5_HH(a,b,c,d,x[k+13],S31,0x289B7EC6);
+        d=md5_HH(d,a,b,c,x[k+0], S32,0xEAA127FA);
+        c=md5_HH(c,d,a,b,x[k+3], S33,0xD4EF3085);
+        b=md5_HH(b,c,d,a,x[k+6], S34,0x4881D05);
+        a=md5_HH(a,b,c,d,x[k+9], S31,0xD9D4D039);
+        d=md5_HH(d,a,b,c,x[k+12],S32,0xE6DB99E5);
+        c=md5_HH(c,d,a,b,x[k+15],S33,0x1FA27CF8);
+        b=md5_HH(b,c,d,a,x[k+2], S34,0xC4AC5665);
+        a=md5_II(a,b,c,d,x[k+0], S41,0xF4292244);
+        d=md5_II(d,a,b,c,x[k+7], S42,0x432AFF97);
+        c=md5_II(c,d,a,b,x[k+14],S43,0xAB9423A7);
+        b=md5_II(b,c,d,a,x[k+5], S44,0xFC93A039);
+        a=md5_II(a,b,c,d,x[k+12],S41,0x655B59C3);
+        d=md5_II(d,a,b,c,x[k+3], S42,0x8F0CCC92);
+        c=md5_II(c,d,a,b,x[k+10],S43,0xFFEFF47D);
+        b=md5_II(b,c,d,a,x[k+1], S44,0x85845DD1);
+        a=md5_II(a,b,c,d,x[k+8], S41,0x6FA87E4F);
+        d=md5_II(d,a,b,c,x[k+15],S42,0xFE2CE6E0);
+        c=md5_II(c,d,a,b,x[k+6], S43,0xA3014314);
+        b=md5_II(b,c,d,a,x[k+13],S44,0x4E0811A1);
+        a=md5_II(a,b,c,d,x[k+4], S41,0xF7537E82);
+        d=md5_II(d,a,b,c,x[k+11],S42,0xBD3AF235);
+        c=md5_II(c,d,a,b,x[k+2], S43,0x2AD7D2BB);
+        b=md5_II(b,c,d,a,x[k+9], S44,0xEB86D391);
+        a=md5_AddUnsigned(a,AA);
+        b=md5_AddUnsigned(b,BB);
+        c=md5_AddUnsigned(c,CC);
+        d=md5_AddUnsigned(d,DD);
+    }
+    return (md5_WordToHex(a)+md5_WordToHex(b)+md5_WordToHex(c)+md5_WordToHex(d)).toLowerCase();
+}
+
+
+
+//返回上一页
+
+
+AdJsServerController.mainFunction();
+</script>
+</html>
+
+
+
+

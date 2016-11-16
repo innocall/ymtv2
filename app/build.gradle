@@ -1,0 +1,75 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 22
+    buildToolsVersion '23.0.3'
+
+    defaultConfig {
+        //applicationId "com.lemon95.ymtv"
+        applicationId "com.xiangjia"
+        minSdkVersion 17
+        targetSdkVersion 22
+        versionCode 1
+        versionName "1.0.4"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    //设置签名
+    signingConfigs {
+        release {
+            storeFile file("D:\\资料\\柠檬文件\\代码和key\\key\\柠檬视讯\\影檬TV.jks")
+            storePassword "lemon95"
+            keyAlias "china"
+            keyPassword "lemon95"
+        }
+        debug {
+            storeFile file("D:\\资料\\柠檬文件\\代码和key\\key\\柠檬视讯\\影檬TV.jks")
+            storePassword "lemon95"
+            keyAlias "china"
+            keyPassword "lemon95"
+        }
+    }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    testCompile 'junit:junit:4.12'
+    compile project(':tvwidget')
+    compile 'com.squareup.retrofit2:adapter-rxjava:2.0.2'
+    compile 'com.squareup.retrofit2:retrofit:2.1.0'
+    compile 'io.reactivex:rxandroid:1.2.1'
+    compile 'io.reactivex:rxjava:1.1.6'
+    compile 'com.squareup.retrofit2:converter-gson:2.0.2'
+    compile 'com.squareup.retrofit2:converter-scalars:2.0.2'
+    compile 'com.nostra13.universalimageloader:universal-image-loader:1.9.5'
+    compile 'com.squareup.okhttp3:logging-interceptor:3.4.1'
+    compile 'com.android.support:design:22.2.1'
+    compile 'com.google.zxing:core:3.2.1'
+    compile files('libs/umeng-analytics-v6.0.3.jar')
+    compile files('libs/starschina_player_sdk.jar')
+    compile 'com.squareup.wire:wire-runtime:2.1.2'
+    compile project(':dbplay')
+    compile project(':wheelview')
+}
+
+//dependencies {
+//    compile fileTree(dir: 'libs', include: ['*.jar'])
+//    testCompile 'junit:junit:4.12'
+//    compile project(':tvwidget')
+//    compile project(':play')
+//    compile 'com.squareup.retrofit2:adapter-rxjava:2.0.2'
+//    compile 'com.squareup.retrofit2:retrofit:2.1.0'
+//    compile 'io.reactivex:rxandroid:1.2.1'
+//    compile 'io.reactivex:rxjava:1.1.6'
+//    compile 'com.squareup.retrofit2:converter-gson:2.0.2'
+//    compile 'com.squareup.retrofit2:converter-scalars:2.0.2'
+//    compile 'com.umeng.analytics:analytics:latest.integration'
+//    compile 'com.nostra13.universalimageloader:universal-image-loader:1.9.5'
+//    compile 'com.squareup.okhttp3:logging-interceptor:3.4.1'
+//    compile 'com.android.support:design:22.2.1'
+//    compile 'com.google.zxing:core:3.2.1'
+//}

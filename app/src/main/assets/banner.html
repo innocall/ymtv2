@@ -1,0 +1,1451 @@
+<!DOCTYPE html><head>
+<meta charset="utf-8"> 
+<meta name="viewport" content="height=device-height,initial-scale=1, maximum-scale=1">
+<title></title>
+<!-- <script src="adController_android.js"></script> -->
+<style type="text/css">
+* { padding:0; margin:0;}
+body{
+margin:0px auto;
+}
+.poster {
+    vertical-align:middle;
+    width:100%;
+    max-height:100%;
+    max-width:100%;
+    height:100%;
+}
+.con_div{
+width: 100%;
+text-align:center;
+vertical-align:middle;
+color:#000;
+}
+.iframeDiv{
+position:absolute;
+filter:alpha(Opacity=80);
+z-index:100;
+width:100%;
+height:100%;
+}
+.float_div{
+position:absolute;
+float:right;
+z-index:100;
+width:75px;
+height:75px;
+right:0;
+top:0;
+background-image:url(http://ad-cache.dopool.com/ad/AdSale/html_api/bg_video_ad_timer.png);
+}
+.close_div{
+position:absolute;
+float:right;
+z-index:100;
+right:0;
+top:0;
+text-align: right;
+}
+.back{
+position:absolute;
+float:left;
+z-index:100;
+left:0;
+top:0;
+}
+.timer{
+color:#fff;    
+position:absolute;
+z-indent:2;
+left:0;
+top:0;
+}
+
+</style>
+</head>
+<body>
+    <div class="con_div" id="con_div">
+        <div class="back" onclick="goback()" style='display:none'>
+            <div id="" class="timer">
+                    <img id="backImg" src="http://ad-cache.dopool.com/ad/AdSale/html_api/back_from_video_ad.png">
+            </div>
+        </div>
+        <div id="float_div" class="float_div" style='display:none'>
+                <div id="timer" class="timer">
+                    5
+                </div>
+        </div>
+        <div id="close" class="close_div" style='display:none'>
+                <img id="close_img" onclick="AdJsServerController.closeImg()" src="http://ad-cache.dopool.com/ad/AdSale/html_api/close.png">
+        </div>
+        <div onclick="AdJsServerController.downloadapp()" id="iframeDiv" class="iframeDiv" style="display:none;"></div>
+        <iframe id="iframe" width="100%" height="100%" style="display:none" src=""></iframe>
+        <!--<img onclick="AdJsServerController.downloadapp()" id="ad_img" src="" class="poster" >-->
+        <div id="ad_img_wrapper"></div>
+        <img style="display:none" id="start_ad_img" src="" class="poster" >
+        <input id="ad_location" type="hidden" value="">
+        <input id="app_name" type="hidden" value="">
+        <input id="app_iscancel" type="hidden" value="">
+        <input id="location_type" type="hidden" value="">
+        <input id="user_imp" type="hidden" value="">
+        <input id="user_clk" type="hidden" value="">
+        <input id="third_imp" type="hidden" value="">
+        <input id="third_clk" type="hidden" value="">
+        <input id="sm_clk" type="hidden" value="">
+        <input id="orderid" type="hidden" value="">
+    </div>
+</body>
+<script>
+
+var adtypes = {
+    startloading: 'startapp',
+    loading: 'pre_play',
+    banner: 'banner',
+    preinsert: 'interstitial'
+};
+
+try{
+
+
+var $ = function (selector) {
+    var obj;
+    var isclass = false;
+    var str = selector.substr(1);
+    if(selector.indexOf(".") >= 0){
+        isclass = true;
+        obj = document.getElementsByClassName(str);
+    }else{
+        obj = document.getElementById(str);
+    }
+    //console.log(obj)
+    var jquery = {
+        "val":function(){
+            if(arguments[0] != undefined){
+                obj.value = arguments[0];
+            }
+            return obj.value;
+        },
+        "attr":function(){
+            if(arguments.length > 1){
+                obj.setAttribute(arguments[0], arguments[1])
+            }
+            return obj.getAttribute(arguments[0]);
+        },
+        "css":function(){
+            if(isclass){
+                for (var i = 0; i < obj.length; i++) {
+                    if(arguments.length == 2){
+                        obj[i].style[arguments[0]] = arguments[1]
+                    }
+                };
+                return obj[0].style[arguments[0]];
+            }else{
+                if(arguments.length == 2){
+                    obj.style[arguments[0]] = arguments[1]
+                }
+                return obj.style[arguments[0]];
+            }
+        },
+        "html":function(){
+            if(arguments[0] != undefined){
+                obj.innerHTML = arguments[0];
+            }
+            return obj.innerHTML;
+
+        }
+    }
+    return jquery;
+}
+
+var common = common || (function(){
+
+    //Base64压缩算法js实现
+    var Base64 = {
+        // private property
+        _keyStr : "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=",
+
+        // public method for encoding
+        encode : function (input) {
+            var output = "";
+            var chr1, chr2, chr3, enc1, enc2, enc3, enc4;
+            var i = 0;
+
+            input = Base64._utf8_encode(input);
+
+            while (i < input.length) {
+
+                chr1 = input.charCodeAt(i++);
+                chr2 = input.charCodeAt(i++);
+                chr3 = input.charCodeAt(i++);
+
+                enc1 = chr1 >> 2;
+                enc2 = ((chr1 & 3) << 4) | (chr2 >> 4);
+                enc3 = ((chr2 & 15) << 2) | (chr3 >> 6);
+                enc4 = chr3 & 63;
+
+                if (isNaN(chr2)) {
+                    enc3 = enc4 = 64;
+                } else if (isNaN(chr3)) {
+                    enc4 = 64;
+                }
+                output = output +
+                this._keyStr.charAt(enc1) + this._keyStr.charAt(enc2) +
+                this._keyStr.charAt(enc3) + this._keyStr.charAt(enc4);
+
+            }
+            return output;
+        },
+        // public method for decoding
+        decode : function (input) {
+            var output = "";
+            var chr1, chr2, chr3;
+            var enc1, enc2, enc3, enc4;
+            var i = 0;
+            input = input.replace(/[^A-Za-z0-9\+\/\=]/g, "");
+            while (i < input.length) {
+                enc1 = this._keyStr.indexOf(input.charAt(i++));
+                enc2 = this._keyStr.indexOf(input.charAt(i++));
+                enc3 = this._keyStr.indexOf(input.charAt(i++));
+                enc4 = this._keyStr.indexOf(input.charAt(i++));
+
+                chr1 = (enc1 << 2) | (enc2 >> 4);
+                chr2 = ((enc2 & 15) << 4) | (enc3 >> 2);
+                chr3 = ((enc3 & 3) << 6) | enc4;
+                output = output + String.fromCharCode(chr1);
+                if (enc3 != 64) {
+                    output = output + String.fromCharCode(chr2);
+                }
+                if (enc4 != 64) {
+                    output = output + String.fromCharCode(chr3);
+                }
+            }
+            output = Base64._utf8_decode(output);
+            return output;
+        },
+        // private method for UTF-8 encoding
+        _utf8_encode : function (string) {
+            string = string.replace(/\r\n/g,"\n");
+            var utftext = "";
+            for (var n = 0; n < string.length; n++) {
+                var c = string.charCodeAt(n);
+                if (c < 128) {
+                    utftext += String.fromCharCode(c);
+                }
+                else if((c > 127) && (c < 2048)) {
+                    utftext += String.fromCharCode((c >> 6) | 192);
+                    utftext += String.fromCharCode((c & 63) | 128);
+                }
+                else {
+                    utftext += String.fromCharCode((c >> 12) | 224);
+                    utftext += String.fromCharCode(((c >> 6) & 63) | 128);
+                    utftext += String.fromCharCode((c & 63) | 128);
+                }
+            }
+            return utftext;
+        },
+
+        // private method for UTF-8 decoding
+        _utf8_decode : function (utftext) {
+            var string = "";
+            var i = 0;
+            var c = c1 = c2 = 0;
+            while ( i < utftext.length ) {
+                c = utftext.charCodeAt(i);
+                if (c < 128) {
+                    string += String.fromCharCode(c);
+                    i++;
+                }
+                else if((c > 191) && (c < 224 )) {
+                    c2 = utftext.charCodeAt(i+1);
+                    string += String.fromCharCode(((c & 31) << 6) | (c2 & 63));
+                    i += 2;
+                }
+                else {
+                    c2 = utftext.charCodeAt(i+1);
+                    c3 = utftext.charCodeAt(i+2);
+                    string += String.fromCharCode(((c & 15) << 12) | ((c2 & 63) << 6) | (c3 & 63));
+                    i += 3;
+                }
+            }
+            return string;
+        }
+    }
+
+    //Localstorage的重写
+    var localstorage = {
+        "getItem" : function(key){
+            var info  =  AdInterface.getPhoneInfo()
+            info = JSON.parse(info);
+            var app_ver = info['app_ver'] !=  undefined ? info['app_ver'] : info['appver'];;
+            key = app_ver + "_" + key;
+            var res;
+            if(typeof(AdInterface) !=  "undefined" && "getDataCache" in AdInterface){
+                res = AdInterface.getDataCache(key)
+                if(res == "undefined"){
+                    res = undefined;
+                }
+            }else{
+                res = locallocalstorage.getItem(key);
+            }
+            return res;
+        },
+        "setItem" : function(key, value){
+            var info = AdInterface.getPhoneInfo()
+            info = JSON.parse(info);
+            var app_ver = info['app_ver'] !=  undefined ? info['app_ver'] : info['appver'];;
+            key = app_ver + "_" + key;
+            if(typeof(AdInterface) !=  "undefined" && "setDataCache" in AdInterface){
+                res = AdInterface.setDataCache(key, value);
+            }else{
+                res = locallocalstorage.setItem(key, value);
+            }
+        },
+        "removeItem" : function(key){
+            var info = AdInterface.getPhoneInfo()
+            info = JSON.parse(info);
+            var app_ver = info['app_ver'] !=  undefined ? info['app_ver'] : info['appver'];;
+            key = app_ver + "_" + key;
+            if(typeof(AdInterface) !=  "undefined" && "removeDataCache" in AdInterface){
+                AdInterface.removeDataCache(key);
+            }else{
+                locallocalstorage.removeItem(key);
+            }
+        }
+    };
+
+    var paramsToJson = function(params){
+        var data = params.split("&");
+        var res = {};
+        for(var i=0, iLoop = data.length; i < iLoop; i++){
+            var tmp = data[i].split("=");
+            res[tmp[0]] = tmp[1];
+        }
+        return res;
+    };
+
+    //判断对象是否为空
+    var isEmpty = function(obj){
+        for (var name in obj){
+            return false;
+        }
+        return true;
+    };
+
+    /**
+     *
+     * 往url后面添加参数,支持多个参数
+     *
+     * @param String url
+     *
+     * @param Object params
+     *
+     * @param Object params ...
+     *
+     * @return String url 返回添加完参数的url
+     *
+     * 用法：
+     * 输入 addparams('url.com', {a: 'a'}, {b: 'b'})
+     * 输出 'url.com?a=a&b=b'
+     */
+
+    var addParams = function(){
+
+        var args = [].slice.call(arguments);
+
+        var url = '';
+        if( args[0]){
+            url = /\?/.test(args[0]) ? args[0] + '&' : args[0] + '?';
+        }
+
+        var ps = [];
+
+        for(var i = 1; i < args.length; i++){
+            for(var key in args[i]){
+                if(args[i].hasOwnProperty(key)){
+                    ps.push(encodeURIComponent(key) + '=' + encodeURIComponent(args[i][key]));
+                }
+            }
+        }
+
+        url += ps.join('&');
+
+        return url;
+    };
+
+    function getDate(date){
+        var myDate = date ? (new Date(date)) : (new Date());
+
+        var arr = [];
+        arr.push(myDate.getFullYear());
+        arr.push(myDate.getMonth() + 1);
+        arr.push(myDate.getDate());
+
+        return arr.join('-');
+    }
+
+    function isString(obj){
+        return typeof obj === 'string';
+    }
+
+    function isUndefined(obj){
+        return typeof obj === 'undefined' || obj === 'undefined';
+    }
+
+    function isDefined(obj){
+        return !isUndefined(obj);
+    }
+
+   function checkDayNum(data, index, adDate){
+        var dayNum = common.getItem("dayNum");
+        var res = true;
+        if(typeof(dayNum) == "string" && dayNum !== "undefined"){
+            var dayNumObj = JSON.parse(dayNum);
+            if(typeof(dayNumObj[adDate]) !=="undefined" ){
+                var orderDayNum = dayNumObj[adDate][data[index]['ORDERID']];
+                if(orderDayNum !== "undefined" && data[index]['DAY_NUM'] > 0 && orderDayNum >= data[index]['DAY_NUM']){
+                    res = true;
+                }else{
+                    res = false;
+                }
+            }else{
+                var dayNumStr = '{"' + adDate + '":{}}';
+                common.setItem("dayNum", dayNumStr);
+                res = false;
+            }
+        }else{
+            var dayNumStr = '{"' + adDate + '":{}}';
+            common.setItem("dayNum", dayNumStr);
+            res = false;
+        }
+        return res;
+    }
+
+    function isExpired(timestamp){
+        var now = (new Date()).getTime();
+        var dif = timestamp ? now - timestamp : 0;
+        return dif > 1000*60*30;
+    }
+
+    function appverToNum(appver){
+        appver = appver.replace(".", "");
+        res = appver[0] + '.' + appver.substr(1, appver.length);
+        return parseFloat(res);
+    }
+
+    function extend(){
+        var args = [].slice.call(arguments);
+        var target = args[0] || {};
+        var source = args[1];
+
+        for(var prop in source){
+            target[prop] = source[prop];
+        }
+        if(args.length > 2){
+            args[0] = target;
+            console.log('argsa=', args);
+            args.splice(1, 1);
+            console.log('argsb=', args);
+            extend.apply(this, args);
+        }
+
+        return target;
+    }
+
+    return {
+        Base64: Base64,
+        getItem: localstorage.getItem,
+        setItem: localstorage.setItem,
+        removeItem: localstorage.removeItem,
+        isEmpty: isEmpty,
+        paramsToJson: paramsToJson,
+        addParams: addParams,
+        getDate: getDate,
+        isString: isString,
+        isUndefined: isUndefined,
+        isDefined: isDefined,
+        checkDayNum: checkDayNum,
+        isExpired: isExpired,
+        appverToNum: appverToNum,
+        extend: extend
+    };
+
+})();
+
+var ClientInterface = ClientInterface || (function(){
+
+    function getPhoneInfo(){
+        if(common.isDefined(AdInterface) && common.isDefined(AdInterface.getPhoneInfo)){
+            return AdInterface.getPhoneInfo()
+        }else{
+            return HuDongJSInterface.getPhoneInfo();
+        }
+    }
+
+    function getDataCache(key){
+        return AdInterface.getDataCache(key);
+    }
+
+    function setDataCache(key, value){
+        AdInterface.setDataCache(key, value);
+    }
+
+    function removeDataCache(key){
+        AdInterface.removeDataCache(key);
+    }
+
+    function downloadApp(app_url, app_name){
+        AdInterface.downloadApp(app_url, app_name);
+    }
+
+    function forceDownloadApp(app_url, app_name){
+        AdInterface.forceDownloadApp(app_url, app_name);
+    }
+
+    function openNewTablet(str, url, num){
+        AdInterface.openNewTablet(str, url, num);
+    }
+
+    function back(){
+        AdInterface.back();
+    }
+
+    function show(tag){
+        log('adtest ' + tag, 'AdInterface.show')
+        AdInterface.show();
+    }
+
+    function hide(tag){
+        log('adtest ' + tag, 'AdInterface.hide');
+        AdInterface.hide();
+    }
+
+    function getHdtData(){
+        return AdInterface.getHdtData();
+    }
+
+    function getApi(url){
+        return AdInterface.getApi(url);
+    }
+
+    function noAds(tag){
+        log('adtest ' + tag, 'AdInterface.noads');
+        AdInterface.noAds();
+    }
+
+    function sendApi(dataApi, eventName, adParams){
+        AdInterface.sendApi(dataApi, eventName, adParams);
+    }
+
+    function sendAdData(dataApi, eventName, adParams){
+        try{
+
+            if(common.isUndefined(AdInterface.sendAdData)){
+                AdInterface.sendApi(dataApi, eventName, adParams);
+            }else{
+                AdInterface.sendAdData(dataApi, eventName, adParams);
+            }
+
+        }catch(e){
+            console.log('commonjs error' , e);
+            log('adtest common.js error', e.name + ':' + e.message);
+        }
+    }
+
+    function getCurrentPlay(){
+        return JSON.parse(AdInterface.getCurrentPlay());
+    }
+
+
+
+
+    function showAds(ads, tag){
+        log('adtest ' + tag, 'AdInterface.showAds,ads=' + ads);
+        AdInterface.showAds(ads);
+    }
+
+    function getIflyTek(){
+        return AdInterface.getIflyTek();
+    }
+
+    /**
+     * requestUrl
+     * 异步网络请求,执行回调函数
+     *
+     * @param String setting 请求的参数设置,类型为JSON格式的字符串
+     * {
+     *
+     *  url: String,        必填    请求的url ('http://url.com')
+     *
+     *  method: String,     必填    请求的方法，不区分大小写 ('GET' | 'POSt' | 'get' | 'post' )
+     *
+     *  params: Object,     选填    请求的参数, method是get的时候，已字符串的形式添加到url后面,
+     *                              例如: {a: 'aaa', b: 'bbb'},转化后为'http://url.com?a=aaa&b=bbb'
+     *
+     *  headers: Object,    选填    请求头添加属性（'{"adid":"a1cd2ooderf4","adKey":"W5KGUA2P"}'）
+     *
+     *  timeout: Number,    选填    超时时间，单位秒，不传的话默认值5秒
+     *
+     *  success: String,    必填    请求成功的回调函数，参数为请求的返回内容
+     *                              例如success值为：'request.succesCallback',
+     *                              执行时候要传入返回内容request.successCallback(data)
+     *
+     *  error: String,      必填    请求失败的回调函数，类似于success
+     *
+     *  base64: Boolean     选填    (true | false)返回结果是否需要base64解密,true时需要先解密，默认值为false
+     *
+     * }
+     */
+    function requestUrl(setting){
+        if(!common.isString(setting)){
+            setting = JSON.stringify(setting);
+        }
+
+        //向前兼容没有requestUrl方法的版本
+        if(common.isUndefined(AdInterface.requestUrl)){
+
+            setting = JSON.parse(setting);
+            console.log('no requestUrl' );
+
+            var data = AdInterface.getApi(setting.url);
+
+            data = setting.base64 ? common.Base64.decode(data) : data;
+
+            if(data == 'undefined'){
+                console.log('no requestUrl without data');
+                _getFunctionFromString(setting['error'])(data);
+            }else{
+                console.log('no requestUrl with data',  setting['success']);
+                _getFunctionFromString(setting['success'])(data);
+            }
+
+        }else{
+            AdInterface.requestUrl(setting);
+        }
+    }
+
+    //获取字符串形式的函数对象
+    function _getFunctionFromString (string, scope){
+        var scope = scope || window;
+        var scopeSplit = string.split('.');
+        for (i = 0; i < scopeSplit.length - 1; i++){
+            scope = scope[scopeSplit[i]];
+
+            if (scope == undefined) return;
+        }
+
+        return scope[scopeSplit[scopeSplit.length - 1]];
+    }
+
+    function blockAd(){
+        AdInterface.backAd();
+    }
+
+    function log(tag, msg){
+        AdInterface.log(tag, msg);
+    }
+    return {
+        getPhoneInfo: getPhoneInfo,
+        getDataCache: getDataCache,
+        setDataCache: setDataCache,
+        removeDataCache: removeDataCache,
+        downloadApp: downloadApp,
+        forceDownloadApp: forceDownloadApp,
+        openNewTablet: openNewTablet,
+        back: back,
+        show: show,
+        hide: hide,
+        getHdtData: getHdtData,
+        getApi: getApi,
+        noAds: noAds,
+        sendApi: sendApi,
+        sendAdData: sendAdData,
+        getCurrentPlay: getCurrentPlay,
+        showAds: showAds,
+        getIflyTek: getIflyTek,
+
+        requestUrl: requestUrl,
+        blockAd: blockAd,
+        log: log
+    };
+})();
+
+}catch(e){
+    ClientInterface.log('adtest common.js error', e.name + ':' + e.message);
+}
+
+
+
+window.onerror = function(message, source, lineno, colno, error){
+    ClientInterface.log('adtest banner', message
+            + ':'
+            + JSON.stringify(error)
+            + ' on line '
+            + lineno
+            + ':'
+            + colno
+            + ',source='
+            + source);
+}
+
+//var api_url="http://test.adapi.starschina.com/Adv/api.php";
+var api_url="http://ad.dopool.com/ad/Adv/api.php";
+var dataApi="http://ad-data.starschina.com";
+
+
+var myDate = new Date();
+var year=myDate.getFullYear();
+var month=myDate.getMonth();
+var day=myDate.getDate();
+var adDate=year+'-'+month+'-'+day;
+var adJsonData={};
+var thirdTrack={};
+var show_time;
+var clientParams={};
+var crontab_lock=true;
+var waitTime=15;
+var duration=5*60;
+var hdtlock;
+
+var adpage;
+var tag = 'banner';
+
+//后台功能,用于前台背景控制
+var AdJsServerController = {
+    //adpage: ADPag对象
+    //session: 该页面的唯一标示
+    mainFunction : function(){  
+        ClientInterface.log('adtest banner', 'mainFunction start');
+
+        adpage=ClientInterface.getCurrentPlay();
+        var info=common.getItem("phoneInfo")
+        if(info==undefined){
+            info=(typeof(ClientInterface)!="undefined" && "getPhoneInfo" in ClientInterface)?ClientInterface.getPhoneInfo():HuDongJSInterface.getPhoneInfo();
+            common.setItem("phoneInfo",info);
+        }
+
+        clientParams=eval("("+info+")");
+
+        var name=adpage['name'];
+        var params=name!='SearchViewController'?adpage['params']:{}
+        var ad_screen=adpage['screen'].split('X');
+        clientParams['width']=ad_screen[0];
+        clientParams['height']=ad_screen[1];
+
+        var allads;//=ClientInterface.getDataCache("allads");
+        if(typeof(allads)=="string" && allads!="undefined"){
+            var allads=JSON.parse(allads);
+            AdJsServerController.getadData(allads);
+            ClientInterface.setDataCache("allads","undefined");
+        }
+        if(name=="DownloadPlayView"){
+        	ClientInterface.log('adtest banner','no getBanner;=' + name);
+            return false;
+        }else{
+            this.getBanner(name,params);
+        }
+    },
+    getadData:function(str){
+        var time=new Date();
+        var timeExpires=time.getTime().toString();
+        //loading 广告
+        loadData={'loading':[]}; 
+        if(Object.prototype.toString.call(str['DATA']['LOADING'])=='[object Object]'){
+            
+            for (var key in str['DATA']['LOADING']) {
+                str['DATA']['LOADING'][key]['ORDERID']=key;
+                str['DATA']['LOADING'][key]['PARAMS']=common.paramsToJson(str['DATA']['LOADING'][key]['PARAMS']);
+                loadData['loading'].push(str['DATA']['LOADING'][key]);
+            };
+        }
+        loadData['adchina']=str['DATA']['ADCHINA'];
+        loadData['adchina_video']=str['DATA']['ADCHINA_VIDEO'];
+        loadData['adtouch']=str['DATA']['ADTOUCH'];
+        loadData['bailin_loading']=str['DATA']['BAILIN_LOADING'];
+        common.setItem('loading',JSON.stringify(loadData));
+        common.setItem('loading_expires',timeExpires);
+        common.setItem('loading_index',"0");
+
+
+        //开机图广告
+        if(Object.prototype.toString.call(str['DATA']['STARTLOADING'])=='[object Object]'){
+            if(str['DATA']['STARTLOADING']['ICON']!=undefined){
+                var resData=str['DATA']['STARTLOADING'];
+                resData['STATISTURL']=str['DATA']['STATISTURL']
+                common.setItem('startloading',JSON.stringify(resData));
+            }
+        }
+        
+        var resData=str['DATA'];
+    
+        var bannerData=new Array();
+        var dopool_banner={};
+        if(!common.isEmpty(resData['BANNER_V2']) && Object.prototype.toString.call(resData['BANNER_V2'])=='[object Object]'){
+            
+            for (var key in resData['BANNER_V2']) {
+                resData['BANNER_V2'][key]['ORDERID']=key;
+                resData['BANNER_V2'][key]['PARAMS']=common.paramsToJson(resData['BANNER_V2'][key]['PARAMS']);
+                bannerData.push(resData['BANNER_V2'][key]);
+            };
+        }
+        dopool_banner['type']='banner';
+        dopool_banner['data']=bannerData;
+        common.setItem('banner',JSON.stringify(dopool_banner));
+        common.setItem('banner_expires',timeExpires);
+        common.setItem('banner_index',"0");
+    },
+
+    getBanner:function(name,params){
+    	ClientInterface.log('adtest banner','getBanner');
+        var data=common.getItem("banner");
+        var banner_expires=common.getItem("banner_expires");
+        var now=new Date().getTime();
+        var dif=banner_expires!==undefined?now-banner_expires:0;
+
+        var searchView=name=='SearchViewController'?true:false;
+        if(data===null || data===undefined || dif>1000*60*30){
+            var url = common.addParams(api_url, {a: 'getallads'}, clientParams);
+            ClientInterface.log('adtest banner', 'before requestUrl,url=' + url);
+            ClientInterface.requestUrl({
+                url: url,
+                method: 'get',
+                success: 'AdJsServerController.getAdDataSuccess',
+                error: 'AdJsServerController.getAdDataError'
+            });
+        }else{
+            AdJsServerController.afterGetBanner(data);
+        }
+    },
+
+    afterGetBanner: function(data){
+    	ClientInterface.log('adtest banner','afterGetBanner='+data);
+        var params = adpage['name'] != 'SearchViewController' ? adpage['params'] : {};
+        var videoType = params.videoType;
+        var viewId = (videoType == '0' || videoType == '11') ? 'vod' : params.videoId;
+        if(adpage['name'] == 'ActivePlayerViewController'){
+            var viewType = 'VIDEOIDS';
+        }else if(adpage['name'] == 'ColumnHomeViewController'){
+            var viewType = 'SHOWIDS';
+        }else{
+             var viewType = 'VIDEOIDS';
+        }
+        var searchView = adpage['name '] == 'SearchViewController' ? true : false;
+    
+        if(data!==undefined && data!==null){
+
+            if(typeof(data)=='string'){
+                data=JSON.parse(data);
+            }
+            if(data['data'].length>0){
+                var banner=data['data'];
+                var length=data['data'].length;
+                var index=0;
+                var banner_index=typeof(common.getItem("banner_index"))=='string'?parseInt(common.getItem("banner_index")):undefined;
+                if(banner_index>=length || banner_index==undefined){
+                    index=0;
+                }else{
+                    index=banner_index;
+                }
+                var tmp_index=index;
+                var orderId=0;
+                var indexArr=new Array();
+                var b_index=0;
+                for(var i =index; i <length; i++){
+                    if(viewType!==undefined){
+                        var viewIds=','+banner[i][viewType]+',';
+                        var excludevideoids=banner[i]['EXCLUDE']!=undefined?','+banner[i]['EXCLUDE']+',':"";
+                        if(viewIds.indexOf(','+viewId+',')!==-1 || (banner[i][viewType]=='all' && excludevideoids.indexOf(','+viewId+',')==-1)){
+                            try 
+                            {
+                                var isInstall=ADJsClientController.isAppInstalled(banner[i]['PACKAGE_NAME'])
+                                if(isInstall){
+                                    continue;
+                                }
+                            }catch(e){
+                            }
+                            //判断是否满足每日点击
+                            if(common.checkDayNum(banner,i,adDate)){
+                                continue;
+                            }
+                            if(orderId===0){
+                                orderId=banner[i]['ORDERID'];
+                                index=parseInt(i)+1;
+                                b_index=i;
+                                common.setItem('banner_index',index.toString());
+                            }
+                        }
+                    }
+                }
+                if(orderId==0 && tmp_index>0){
+                    for (var j = 0; j < tmp_index; j++) {
+                        if(viewType!==undefined){
+                            var viewIds=','+banner[j][viewType]+',';
+
+                            var excludevideoids=banner[j]['EXCLUDE']!=undefined?','+banner[j]['EXCLUDE']+',':"";
+                            if(viewIds.indexOf(','+viewId+',')!==-1 || (banner[j][viewType]=='all' && excludevideoids.indexOf(','+viewId+',')==-1)){
+
+                                try
+                                {
+                                    var isInstall=ADJsClientController.isAppInstalled(banner[i]['PACKAGE_NAME'])
+                                    if(isInstall){
+                                        continue;
+                                    }
+                                }catch(e){
+                                }
+                                //判断是否满足每日点击
+                                if(common.checkDayNum(banner,j,adDate)){
+                                    continue;
+                                }
+                                if(orderId===0){
+                                    orderId=banner[j]['ORDERID'];
+                                    index=parseInt(j)+1;
+                                    b_index=j
+                                    common.setItem('banner_index',index.toString());
+                                }
+                            }
+                        }
+                    }
+                }
+                if(orderId!==0){
+                    if(orderId=="ADMOB_BANNER"){
+                        //展示触控banner
+                        ad={
+                            "type":"admob_banner",
+                            "timeout":banner[b_index]['DURATION'],
+                            "params":banner[b_index]['PARAMS'],
+                        }
+                        ad['dataApi']=dataApi;
+                        ad['params']['videoid']=params['videoId'];
+                        ClientInterface.showAds(JSON.stringify(ad), tag);
+                        return true;
+                    }
+                    banner[b_index]['PARAMS']['videoid']=params['videoId'];
+                    adJsonData=banner[b_index];
+                    var location=banner[b_index]['LOCATION'];
+                    var location_type=banner[b_index]['LOCATION_TYPE'];
+                    var app_name="";
+                    var app_iscancel="0";
+                    var lomark_ts="";
+                    var lomark_tc="";
+                    if(adJsonData['PARAMS']['lomark_ts']!=undefined){
+                        lomark_ts=common.Base64.decode(adJsonData['PARAMS']['lomark_ts']);
+                        delete adJsonData['PARAMS']['lomark_ts'];
+                    }
+                    if(location!="" && location != undefined){
+                        var aQuery = location.split("?");  //取得Get参数
+                        var aGet = new Array();
+                        if(aQuery.length > 1)
+                        {
+                            var aBuf = aQuery[1].split("&");
+                            for(var i=0, iLoop = aBuf.length; i<iLoop; i++)
+                            {
+                                var aTmp = aBuf[i].split("=");  //分离key与Value
+                                aGet[aTmp[0]] = aTmp[1];
+                            }
+                        }
+                        if(location_type=="0"){
+                            location=decodeURIComponent(aGet['location']);
+                            lomark_tc=aGet['lomark_tc']!=undefined?common.Base64.decode(aGet['lomark_tc']):"";
+                        }else{
+                            location=decodeURIComponent(aGet['app_url']);
+                            app_name=aGet['app_url_name'];
+                            app_iscancel=aGet['app_iscancel'];
+                        }
+                    }
+                    adJsonData['LOCATION']=location;
+                    adJsonData['LOCATION_TYPE']=location_type;
+                    adJsonData['APP_NAME']=app_name;
+                    adJsonData['APP_ISCANCEL']=app_iscancel;
+                    adJsonData['lomark_ts']=lomark_ts;
+                    adJsonData['lomark_tc']=lomark_tc;
+                    ad=adJsonData;
+                    ad['dataApi']=dataApi;
+                    ad['type']='banner';
+                    ClientInterface.showAds(JSON.stringify(ad), tag);
+                    this.init();
+                }else{
+                    ClientInterface.noAds( tag);
+                }
+            }
+            
+        }else{
+        	ClientInterface.noAds( tag);
+        }
+    },
+
+    getAdDataSuccess: function(res){
+        ClientInterface.log('adtest banner', 'requestUrl success');
+        var data;
+        if(typeof(res)=="string"){
+            var str=eval("("+common.Base64.decode(res)+")");
+
+            if(str!=undefined && str['CODE']==='SUCCESS'){
+                AdJsServerController.getadData(str);
+                data=common.getItem("banner");
+                AdJsServerController.afterGetBanner(data);
+            }else{
+                var timeExpires=time.getTime().toString();
+                common.setItem('banner_expires',timeExpires);
+                common.removeItem('banner');
+            }
+        }
+    },
+
+    getAdDataError: function(err){
+        ClientInterface.log('adtest banner', 'requestUrl error');
+    
+    },
+
+    init:function() {
+    
+        var data=common.getItem("banner");
+        var width=clientParams['width'];
+        $("#con_div").css('height',(parseInt(clientParams['height'])/8)+"px");
+        $("#con_div").css('width',parseInt(clientParams['height'])/8*6+"px");
+        $("#close_img").css('width',parseInt(clientParams['height'])/8/3+"px");
+        $("#close_img").css('height',parseInt(clientParams['height'])/8/3+"px");
+        data=JSON.parse(data);
+        var showData=data.data;
+        var hdt="";
+        if(adJsonData['ORDERID']=='HDT_BANNER'){
+            try{
+                hdt=ClientInterface.getHdtData();
+                hdt=hdt.replace(/\n/g, "");
+                if(hdt!=""){
+                    var hdtData=this.hdtInfo(JSON.parse(hdt),width)
+                    if(hdtData!==false){
+                        adJsonData['ICON']=hdtData['icon'];
+                        adJsonData['LOCATION']=hdtData['location'];
+                        adJsonData['USER_IMP']=hdtData['um_imp']==undefined?"":hdtData['um_imp'];
+                        adJsonData['USER_CLK']=hdtData['um_clk']==undefined?"":hdtData['um_clk'];
+                        adJsonData['THIRD_IMP']=hdtData['tm_imp']==undefined?"":hdtData['tm_imp'];
+                        adJsonData['THIRD_CLK']=hdtData['tm_clk']==undefined?"":hdtData['tm_clk'];
+                        adJsonData['HDT_TS']=hdtData['sm_imp']==undefined?"":hdtData['sm_imp'];
+                        adJsonData['SM_CLK']=hdtData['sm_clk']==undefined?"":hdtData['sm_clk'];
+                        adJsonData=adJsonData;
+                    }else{
+                        adJsonData['ICON']="";
+                    }
+                }else{
+                    adJsonData['ICON']="";
+                }
+            }catch(e){
+                adJsonData['ICON']="";
+            }
+        }
+        if(adJsonData['ORDERID']=='ADCHINA_BANNER'){
+            var adchinaData=adJsonData['DATA'];
+            adJsonData['ICON']=adchinaData['mtr'][0]['url'];
+            adJsonData['LOCATION']=adchinaData['cu'];   
+            if(adchinaData['tracking']!=undefined && adchinaData['tracking'].length>0){
+                for(x in adchinaData['tracking'] ){
+                    if(adchinaData['tracking'][x]['et']=='33'){
+                        thirdTrack['adchina_banner_third_show']=adchinaData['tracking'][x]['tku'];
+                    }else if(adchinaData['tracking'][x]['et']=='34'){
+                        thirdTrack['adchina_banner_third_click']=adchinaData['tracking'][x]['tku'];
+                    }
+                }
+            }
+            thirdTrack['adchina_banner_show']=adchinaData['btu']+"&et=33";
+            thirdTrack['adchina_banner_click']=adchinaData['btu']+"&et=34&pst=20%2c30";
+        }
+        var icon=adJsonData['ICON'];
+        if(icon!=undefined && icon!=""){
+
+            var html=(icon.indexOf('html')==-1)?0:1;
+            show_time=adJsonData['DURATION'];
+            if(html==1){
+                $("#iframe").css('display','block');
+                $("#iframeDiv").css('display','block');
+                $("#iframe").attr('src',decodeURIComponent(icon));
+                document.getElementById('iframe').onload = function(){
+                    AdJsServerController.startShow();
+                };
+            }else{
+                $("#iframe").css('display','none');
+                $("#iframeDiv").css('display','none');
+                //$("#ad_img").attr('src',icon);
+                var img = new Image();
+                img.onload = AdJsServerController.startShow;
+                img.onclick = function(){
+                    AdJsServerController.downloadapp();
+                };
+                img.classList.add('poster');
+                img.src = icon;
+                document.getElementById('ad_img_wrapper').appendChild(img);
+            }
+            
+            //AdJsServerController.adexposure(adJsonData['PARAMS']);
+            $("#close").css("display",'block');
+            $("#orderid").val(adJsonData['ORDERID']);
+            //$("#order_params").val(JSON.stringify(adJsonData['PARAMS']));
+
+            //if(!crontab_lock){
+                //AdJsServerController.startShow(tag)
+            //}
+
+        }
+
+        //var data=BaseClientInterface.getDataCache("banner");
+        //showad(data,index,clientParams);
+            
+    },
+
+    hdtInfo:function(hdt,width){
+        var now=new Date().getTime();
+        var hdtInfo={"icon":"","location":""};
+        var advalidity=hdt['advalidity'];
+
+        var year=advalidity.substring(0,4);
+        var month=advalidity.substring(4,6);
+        var date=advalidity.substring(6,8);
+        advalidity=year+","+month+","+date;
+        var expires=new Date(advalidity).getTime();
+        expires=expires+1000*60*60*24;
+        if(now>expires){
+            return false;
+        }
+        for(img_index in hdt['img']['urls']){
+            if(hdtInfo['icon']=="" && hdt['img']['urls'][img_index]['width']==width && hdt['img']['urls'][img_index]['value']!=""){
+                hdtInfo['icon']=hdt['img']['dld_base']+hdt['img']['urls'][img_index]['value'];
+            }
+        }
+        if(hdtInfo['icon']==""){
+            hdtInfo['icon']=hdt['img']['dld_base']+hdt['img']['urls'][3]['value'];
+        }
+
+        for(i in hdt['clk']['urls']){
+            if(hdt['clk']['urls'][i]['value']!=""){
+                hdtInfo['location']=hdt['clk']['urls'][i]['value'];
+            }
+        }
+        for(i in hdt['tracks']){
+            var key=hdt['tracks'][i]['type'];
+            var val=hdt['tracks'][i]['url'];
+            if(val.indexOf("\n")>0){
+                val=val.substr(0,val.indexOf("\n"));
+            }
+            if(key=='sm_imp'){
+                hdtInfo['sm_imp']=val;
+            }else if(key=='sm_clk'){
+                hdtInfo['sm_clk']=val;
+            }else if(key=='um_imp'){
+                hdtInfo['um_imp']=val;
+            }else if(key=='um_clk'){
+                hdtInfo['um_clk']=val;
+            }else if(key=='tm_imp'){
+                hdtInfo['tm_imp']=val;
+            }else if(key=='tm_clk'){
+                hdtInfo['tm_clk']=val;
+            }
+        }
+        return hdtInfo;
+    },
+    closeImg:function(){
+        //var adParams=$("#order_params").val();
+        var adParams=adJsonData['PARAMS'];
+        var now=new Date().getTime();
+        ClientInterface.sendAdData(dataApi,'ad_close',JSON.stringify(adParams));
+        if(hdtlock==true){
+            setTimeout(AdJsServerController.thirdClick(),1);
+        }
+        ClientInterface.hide()
+    },
+    closeBanner:function(){
+        return function()
+        {
+            ClientInterface.hide()
+        }
+    },
+    downloadapp:function(){
+        var cloud = arguments[0]?arguments[0]:0;
+        var url=adJsonData['LOCATION']
+        var app_name=adJsonData['APP_NAME']
+        var app_iscancel=adJsonData['APP_ISCANCEL']
+        var location_type=adJsonData['LOCATION_TYPE']
+        if(url==""){
+            return false;
+        }
+        if(adJsonData['lomark_tc']!=undefined){
+            AdJsServerController.sendUrl(adJsonData['lomark_tc']);
+        }
+        //var adParams=$("#order_params").val()
+        var adParams=adJsonData['PARAMS'];
+
+        var now=new Date().getTime();
+        if($("#user_clk").val()!=''){
+            var user_clk=$("#user_clk").val();
+            var rand=Math.ceil(Math.random()*100000000);
+            user_clk=user_clk.replace('[rnd]',rand);
+            this.sendUrl(user_clk);
+        }
+        if($("#third_clk").val()!=''){
+            var third_clk=$("#third_clk").val();
+            var rand=Math.ceil(Math.random()*100000000);
+            third_clk=third_clk.replace('[rnd]',rand);
+            this.sendUrl(third_clk);
+        }
+        if($("#sm_clk").val()!=''){
+            var sm_clk=$("#sm_clk").val();
+            var rand=Math.ceil(Math.random()*100000000);
+            sm_clk=sm_clk.replace('[rnd]',rand);
+            this.sendUrl(sm_clk);
+        }
+        if(thirdTrack['adchina_click']!=undefined){
+            var script = document.createElement('script');
+            script.src = thirdTrack['adchina_click']
+            document.body.appendChild(script);
+        }
+        
+        if(thirdTrack['click']!=undefined){
+            for(x in thirdTrack['click']){
+                var script = document.createElement('script');
+                script.src = thirdTrack['click'][x]
+                document.body.appendChild(script);
+            }
+        }
+
+
+        if(thirdTrack['adchina_click']!=undefined ){
+            ClientInterface.sendAdData(dataApi,'adclick',JSON.stringify(adParams));
+        }
+
+        if(thirdTrack['adchina_banner_click']!=undefined){
+            var script = document.createElement('script');
+            script.src = thirdTrack['adchina_banner_click']
+            document.body.appendChild(script);
+        }
+
+        if(thirdTrack['adchina_banner_third_click']!=undefined){
+            for(x in thirdTrack['adchina_banner_third_click']){
+                var script = document.createElement('script');
+                script.src = thirdTrack['adchina_banner_third_click'][x]
+                document.body.appendChild(script);
+            }
+        }
+        if(thirdTrack['adchina_click']!=undefined || thirdTrack['adchina_banner_click']!=undefined){
+            ClientInterface.sendAdData(dataApi,'adclick',JSON.stringify(adParams));
+        }
+        var orderid=$("#orderid").val()
+
+        if(orderid=='HDT_BANNER'){
+            ClientInterface.sendAdData(dataApi,'adclick',JSON.stringify(adParams));
+        }
+        //单设备每日点击次数
+        dayNum=common.getItem("dayNum");
+        if(typeof(dayNum)=="string" && dayNum!=="undefined"){
+            var dayNumObj=JSON.parse(dayNum);
+            if(typeof(dayNumObj[adDate][orderid])!=="undefined"){
+                dayNumObj[adDate][orderid]+=1
+            }else{
+                dayNumObj[adDate][orderid]=1;
+            }
+            common.setItem("dayNum",JSON.stringify(dayNumObj));
+        }else{
+            var dayNumObj={}
+            dayNumObj[adDate][orderid]=1;
+            common.setItem("dayNum",JSON.stringify(dayNumObj));
+        }
+        if(location_type==="0" ){
+            if(orderid!='adchina' && orderid!='HDT_BANNER' && orderid!='ADCHINA_BANNER'){
+                ClientInterface.sendAdData(dataApi,'adclick',JSON.stringify(adParams));
+                this.openUrl(url,cloud)
+            }else{
+                this.openUrl(url,cloud)
+            }
+        }else{
+            ClientInterface.sendAdData(dataApi,'adclick',JSON.stringify(adParams));
+            if(cloud===0){
+                if(app_iscancel=='1'){
+                    ClientInterface.forcedDownloadApp(url,app_name);
+                }else{
+                    ClientInterface.downloadApp(url,app_name);
+                }
+            }
+            
+        }
+        if(cloud===0){
+            ClientInterface.hide()
+        }
+    },
+    openUrl:function(url,cloud){
+        if(cloud>0){
+            this.sendUrl(url);
+        }else{
+            ClientInterface.openNewTablet('',url,20000*1);    
+        }
+    },
+    adexposure:function(adParams){
+        var now=new Date().getTime();
+        if(adParams['thirdshow']!=undefined){
+            thirdShow=window.atob(adParams['thirdshow']);
+            this.sendUrl(thirdShow)
+            delete adParams['thirdshow'];
+        }
+        ClientInterface.sendAdData(dataApi,'adexposure',JSON.stringify(adParams));
+        if(adJsonData['lomark_ts']!=undefined){
+            AdJsServerController.sendUrl(adJsonData['lomark_ts']);
+        }
+        if(thirdTrack['adchina_show']!=undefined){
+            var script = document.createElement('script');
+            script.src = thirdTrack['adchina_show']
+            document.body.appendChild(script);
+        }
+        if(thirdTrack['show']!=undefined){
+            for(x in thirdTrack['show']){
+                var script = document.createElement('script');
+                script.src = thirdTrack['show'][x]
+                document.body.appendChild(script);
+                //this.sendUrl(thirdTrack['show'][x])
+            }
+        }
+    },
+    sendUrl:function(url){
+        try{
+            //$.getJSON(url)
+            var script = document.createElement('script');
+            script.src = url;
+            document.body.appendChild(script);
+        }catch(e){
+            //console.log(e.message());
+        }
+    },
+    setTimer:function(timer){
+        $("#timer").html(timer);
+        if(timer>0){
+            setTimeout(AdJsServerController._timer(timer),1000);
+        }else{
+            ClientInterface.hide()
+        }
+    },
+
+    _timer:function(timer){
+        return function()
+        {
+            AdJsServerController.setTimer(timer-1);
+        }
+    },
+    thirdClick:function(){
+        return function(){
+            var now=new Date().getTime();
+            if(adJsonData['USER_CLK']!=''){
+                var user_clk=adJsonData['USER_CLK'];
+                var rand=Math.ceil(Math.random()*100000000);
+                user_clk=user_clk.replace('[rnd]',rand);
+                AdJsServerController.sendUrl(user_clk);
+            }
+            if(adJsonData['THIRD_CLK']!=''){
+                var third_clk=adJsonData['THIRD_CLK'];
+                var rand=Math.ceil(Math.random()*100000000);
+                third_clk=third_clk.replace('[rnd]',rand);
+                AdJsServerController.sendUrl(third_clk);
+
+            }
+            if(adJsonData['SM_CLK']!=''){
+                var sm_clk=adJsonData['SM_CLK'];
+                var rand=Math.ceil(Math.random()*100000000);
+                sm_clk=sm_clk.replace('[rnd]',rand);
+                AdJsServerController.sendUrl(sm_clk);
+            }
+
+            //var adParams=$("#order_params").val()
+            var adParams=adJsonData['PARAMS'];
+            ClientInterface.sendAdData(dataApi,'adclick',JSON.stringify(adParams));
+
+            var url=$("#ad_location").val();
+            hdtlock=false;
+            AdJsServerController.sendUrl(url);
+        }
+    },
+    startShow:function(){
+
+            if(crontab_lock){
+                setTimeout(function(){AdJsServerController.startShow()},1000*waitTime);
+                crontab_lock=false;
+            }else{
+                AdJsServerController.adexposure(adJsonData['PARAMS']);
+                ClientInterface.show(tag);
+                crontab_lock=true;
+                waitTime=duration;
+                //console.log('duration--'+show_time);
+                setTimeout(AdJsServerController.closeBanner(),1000*show_time);
+                setTimeout(function(){AdJsServerController.mainFunction();},1000*show_time);
+            
+                var bannerOrderId=adJsonData['ORDERID'];
+                if(bannerOrderId=='ADCHINA_BANNER'){
+                    if(thirdTrack['adchina_banner_third_show']!=undefined){
+                        this.sendUrl(thirdTrack['adchina_banner_third_show']);
+                    }
+                    if(thirdTrack['adchina_banner_show']!=undefined){
+                        this.sendUrl(thirdTrack['adchina_banner_show']);
+                    }
+                }else if(bannerOrderId=='HDT_BANNER'){
+                    
+                    if(adJsonData['HDT_TS'] !=undefined && adJsonData['HDT_TS']!=''){
+                        var hdt_ts=adJsonData['HDT_TS'];
+                        var rand=Math.ceil(Math.random()*100000000);
+                        hdt_ts=hdt_ts.replace('[rnd]',rand);
+                        this.sendUrl(hdt_ts)
+                    }
+                    if(adJsonData['USER_IMP']!=''){
+                        var user_imp=adJsonData['USER_IMP'];
+                        var rand=Math.ceil(Math.random()*100000000);
+                        user_imp=user_imp.replace('[rnd]',rand);
+                        this.sendUrl(user_imp)
+                    }
+                    if(adJsonData['USER_CLK']!=''){ 
+                        $("#user_clk").val(adJsonData['USER_CLK']);
+                    }
+                    if(adJsonData['THIRD_IMP']!=''){
+                        var third_imp=adJsonData['THIRD_IMP'];
+                        var rand=Math.ceil(Math.random()*100000000);
+                        third_imp=third_imp.replace('[rnd]',rand);
+                        this.sendUrl(third_imp)
+                    }
+                    if(adJsonData['THIRD_CLK']!=''){
+                        $("#third_clk").val(adJsonData['THIRD_CLK']);
+                    }
+                    if(adJsonData['SM_CLK']!=''){
+                        $("#sm_clk").val(adJsonData['SM_CLK']);
+                    }
+                    var rand=Math.ceil(Math.random()*1000)
+                    if(rand<=4){
+                        ctime=Math.floor(Math.random()*show_time)
+                        if(ctime<3){
+                            ctime=3;
+                        }else if(ctime>(show_time-3)){
+                            ctime=show_time-3;
+                        }
+                        hdtlock=true;
+                        setTimeout(AdJsServerController.thirdClick(),1000*ctime);
+                    }
+                }else{
+                    var hdt="";
+                    var custom_show=adJsonData['CUSTOM_SHOW']==undefined?0:adJsonData['CUSTOM_SHOW'];
+                    var custom_click=adJsonData['CUSTOM_CLICK']==undefined?0:adJsonData['CUSTOM_CLICK'];
+                    var adexParams=adJsonData['PARAMS'];
+                    if(custom_show>0){
+                        var rand=Math.ceil(Math.random()*1000)
+                        if(rand<=custom_show){
+                            //ctime=Math.floor(Math.random()*show_time)
+                            ctime=1;
+                            setTimeout(function(){AdJsServerController.adexposure(adexParams,clientParams)},1000*ctime);
+                        }
+                    }
+                    if(custom_click>0){
+                        var rand=Math.ceil(Math.random()*1000)
+                        if(rand<=custom_click){
+                            //ctime=Math.floor(Math.random()*show_time)
+                            ctime=1;
+                            setTimeout(function(){AdJsServerController.downloadapp(1)},1000*ctime);
+                        }
+                    }
+                }
+            }
+    }
+        
+};
+
+AdJsServerController.mainFunction();
+</script>
+</html>
+

@@ -1,0 +1,204 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/content11"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clipChildren="false"
+    android:clipToPadding="false"
+    tools:context="com.lemon95.ymtv.view.fragment.UserFragment">
+
+    <com.lemon95.androidtvwidget.view.SmoothHorizontalScrollView
+        android:id="@+id/test_hscroll"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        android:layout_centerHorizontal="true"
+        android:scrollbars="none">
+
+        <com.lemon95.androidtvwidget.view.MainLayout
+            android:id="@+id/page1_main_lay"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_horizontal">
+
+            <com.lemon95.androidtvwidget.view.ReflectItemView
+                android:id="@+id/page3_item1"
+                android:layout_width="@dimen/px480"
+                android:layout_height="@dimen/px720"
+                android:layout_marginLeft="@dimen/px75"
+                android:layout_marginTop="@dimen/px48"
+                android:clickable="true"
+                android:focusable="true"
+                android:nextFocusUp="@+id/title_bar3"
+                android:nextFocusRight="@+id/page3_item2"
+                app:isShape="false"
+                app:isReflect="true">
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <ImageView
+                        android:id="@+id/lemon_page3_img1"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/px720"
+                        android:scaleType="fitXY"
+                        android:src="@drawable/feilei_03" />
+
+                    <RelativeLayout
+                        android:layout_width="@dimen/px220"
+                        android:layout_height="@dimen/px90"
+                        android:background="#577CF6"
+                        android:layout_gravity="bottom"
+                        android:visibility="gone">
+                        <TextView
+                            android:id="@+id/lemon_page3_name1"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="电影"
+                            android:textSize="@dimen/px40"
+                            android:layout_centerInParent="true"
+                            android:textColor="#FFF"/>
+                    </RelativeLayout>
+
+
+                </FrameLayout>
+            </com.lemon95.androidtvwidget.view.ReflectItemView>
+
+            <com.lemon95.androidtvwidget.view.ReflectItemView
+                android:id="@+id/page3_item2"
+                android:layout_width="@dimen/px802"
+                android:layout_height="@dimen/px358"
+                android:layout_marginLeft="@dimen/px559"
+                android:layout_marginTop="@dimen/px48"
+                android:focusable="true"
+                android:nextFocusUp="@+id/title_bar3"
+                android:nextFocusDown="@+id/page3_item3"
+                app:isShape="false"
+                app:isReflect="false">
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <ImageView
+                        android:id="@+id/lemon_page3_img2"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/px358"
+                        android:scaleType="fitXY"
+                        android:src="@drawable/feilei_05" />
+
+                    <RelativeLayout
+                        android:layout_width="@dimen/px220"
+                        android:layout_height="@dimen/px90"
+                        android:background="#C152E5"
+                        android:layout_gravity="left|top"
+                        android:visibility="gone">
+                        <TextView
+                            android:id="@+id/lemon_page3_name2"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="电视剧"
+                            android:textSize="@dimen/px40"
+                            android:layout_centerInParent="true"
+                            android:textColor="#FFF"/>
+                    </RelativeLayout>
+
+                </FrameLayout>
+            </com.lemon95.androidtvwidget.view.ReflectItemView>
+
+            <com.lemon95.androidtvwidget.view.ReflectItemView
+                android:id="@+id/page3_item3"
+                android:layout_width="@dimen/px802"
+                android:layout_height="@dimen/px358"
+                android:layout_marginLeft="@dimen/px559"
+                android:layout_marginTop="@dimen/px410"
+                android:clickable="true"
+                android:focusable="true"
+                android:nextFocusUp="@+id/page3_item2"
+                app:isShape="false"
+                app:isReflect="true">
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <ImageView
+                        android:id="@+id/lemon_page3_img3"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/px358"
+                        android:scaleType="fitXY"
+                        android:src="@drawable/feilei_10" />
+
+                    <RelativeLayout
+                        android:layout_width="@dimen/px220"
+                        android:layout_height="@dimen/px90"
+                        android:background="#32B7A3"
+                        android:layout_gravity="right|top"
+                        android:visibility="gone">
+                        <TextView
+                            android:id="@+id/lemon_page3_name3"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="动漫"
+                            android:textSize="@dimen/px40"
+                            android:layout_centerInParent="true"
+                            android:textColor="#FFF"/>
+                    </RelativeLayout>
+
+                </FrameLayout>
+            </com.lemon95.androidtvwidget.view.ReflectItemView>
+
+            <com.lemon95.androidtvwidget.view.ReflectItemView
+                android:id="@+id/page3_item4"
+                android:layout_width="@dimen/px480"
+                android:layout_height="@dimen/px720"
+                android:layout_marginLeft="@dimen/px1365"
+                android:layout_marginTop="@dimen/px48"
+                android:clickable="true"
+                android:focusable="true"
+                android:nextFocusUp="@+id/title_bar3"
+                app:isShape="false"
+                app:isReflect="true">
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <ImageView
+                        android:id="@+id/lemon_page3_img4"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/px720"
+                        android:scaleType="fitXY"
+                        android:src="@drawable/feilei_07" />
+
+                    <RelativeLayout
+                        android:layout_width="@dimen/px220"
+                        android:layout_height="@dimen/px90"
+                        android:background="#E69E52"
+                        android:layout_gravity="left|top"
+                        android:visibility="gone">
+                        <TextView
+                            android:id="@+id/lemon_page3_name4"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="综艺"
+                            android:textSize="@dimen/px40"
+                            android:layout_centerInParent="true"
+                            android:textColor="#FFF"/>
+                    </RelativeLayout>
+
+                </FrameLayout>
+            </com.lemon95.androidtvwidget.view.ReflectItemView>
+        </com.lemon95.androidtvwidget.view.MainLayout>
+
+    </com.lemon95.androidtvwidget.view.SmoothHorizontalScrollView>
+
+    <!-- 最顶层的边框移动 -->
+    <com.lemon95.androidtvwidget.view.MainUpView
+        android:id="@+id/mainUpView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"></com.lemon95.androidtvwidget.view.MainUpView>
+
+</RelativeLayout>
