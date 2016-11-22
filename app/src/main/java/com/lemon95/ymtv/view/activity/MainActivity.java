@@ -79,6 +79,7 @@ public class MainActivity extends BaseActivity implements OpenTabHost.OnTabSelec
     private List<VideoType.Data> videoTypeList; //影视分类
     private List<Video> videoList;  //每日推荐
     private MsgReceiver msgReceiver;
+    private int postion = 1;
 
     @Override
     protected int getLayoutId() {
@@ -356,6 +357,7 @@ public class MainActivity extends BaseActivity implements OpenTabHost.OnTabSelec
      * 将标题栏的文字颜色改变. <br>
      */
     public void switchTab(OpenTabHost openTabHost, int postion) {
+        this.postion = postion;
         List<View> viewList = openTabHost.getAllTitleView();
         for (int i = 0; i < viewList.size(); i++) {
             TextViewWithTTF view = (TextViewWithTTF) openTabHost.getTitleViewIndexAt(i);
@@ -808,21 +810,32 @@ public class MainActivity extends BaseActivity implements OpenTabHost.OnTabSelec
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            ConfirmDialog.Builder dialog = new ConfirmDialog.Builder(MainActivity.this);
-            dialog.setMessage("您确定退出应用？");
-            dialog.setNegativeButton("取消", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.dismiss();
+            if (postion != 1) {
+                List<View> viewList = mOpenTabHost.getAllTitleView();
+                if (viewList != null && viewList.size() > 1) {
+                    viewList.get(1).setFocusableInTouchMode(true);
+                    viewList.get(1).setFocusable(true);
+                    viewList.get(1).setSelected(true);
+                    viewList.get(1).requestFocus();
+                    onTabSelect(mOpenTabHost, viewList.get(1), 1);
                 }
-            }).setPositiveButton("退出", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    finish();
-                    dialog.dismiss();
-                }
-            });
-            dialog.create().show();
+            } else {
+                ConfirmDialog.Builder dialog = new ConfirmDialog.Builder(MainActivity.this);
+                dialog.setMessage("您确定退出应用？");
+                dialog.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                }).setPositiveButton("退出", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        finish();
+                        dialog.dismiss();
+                    }
+                });
+                dialog.create().show();
+            }
             return false;
         }
         return super.onKeyDown(keyCode, event);
