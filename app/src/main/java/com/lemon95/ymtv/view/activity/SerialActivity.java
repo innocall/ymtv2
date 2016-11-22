@@ -72,7 +72,8 @@ public class SerialActivity extends BaseActivity {
                 bundle.putString("videoImage", picUrl);
                 bundle.putString("lastEpisode", lastEpisode);
                // bundle.putParcelableArrayList("SerialEpisodes", serialEpisodes);
-                startActivity(BdPalyActivity.class, bundle);
+                startActivity(IjkPlayerActivity.class, bundle);
+                //startActivity(BdPalyActivity.class, bundle);
                 //startActivity(PlayActivity.class, bundle);
             }
         });

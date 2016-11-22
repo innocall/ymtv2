@@ -27,7 +27,7 @@ public class MenuDataUtils {
             String[] strings = { "解码器","画幅","杜比音效"};
           //  String[] s2 = {"视频源1", "视频源2"};
             String[] s3 = {"软解码", "硬解码"};
-            String[] s4 = { "原画","拉伸"};
+            String[] s4 = { "原画","拉伸","16:9","4:3"};
             String[] s6 = {"开启", "关闭"};
             String[][] ss = { s3, s4,s6};
             for (int i = 0; i < strings.length; i++) {
@@ -43,7 +43,7 @@ public class MenuDataUtils {
             }
            // String[] s2 = {"视频源1", "视频源2"};
             String[] s3 = {"软解码", "硬解码"};
-            String[] s4 = { "原画","拉伸"};
+            String[] s4 = { "原画","拉伸","16:9","4:3"};
             String[] s6 = {"开启", "关闭"};
             String[][] ss = {s1, s3, s4,s6};
             for (int i = 0; i < strings.length; i++) {

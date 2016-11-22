@@ -1,1 +1,1 @@
-include ':PushSDK', ':app', ':tvwidget', ':dbplay', ':wheelview'
+include ':PushSDK', ':app', ':tvwidget', ':dbplay', ':wheelview', ':ijkplayer-java', ':ijkplayer-exo'

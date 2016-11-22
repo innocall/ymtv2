@@ -23,6 +23,7 @@ import com.lemon95.ymtv.utils.StringUtils;
 import com.lemon95.ymtv.utils.WeixinUtil;
 import com.lemon95.ymtv.utils.XmlUtils;
 import com.lemon95.ymtv.view.activity.BdPalyActivity;
+import com.lemon95.ymtv.view.activity.IjkPlayerActivity;
 
 import java.util.List;
 
@@ -37,7 +38,8 @@ public class BdPlayMoviePresenter {
 
     private static final String TAG = "BdPlayMoviePresenter";
     private static final long TIME = 2000;
-    private BdPalyActivity playActivity;
+    private IjkPlayerActivity playActivity;
+    private BdPalyActivity playActivity2;
     private IMovieBean iMovieBean;
     private boolean isParam = true;
     public boolean isOrder = false;
@@ -52,6 +54,11 @@ public class BdPlayMoviePresenter {
     };
 
     public BdPlayMoviePresenter(BdPalyActivity playActivity) {
+        this.playActivity2 = playActivity;
+        iMovieBean = new MovieDao();
+    }
+
+    public BdPlayMoviePresenter(IjkPlayerActivity playActivity) {
         this.playActivity = playActivity;
         iMovieBean = new MovieDao();
     }

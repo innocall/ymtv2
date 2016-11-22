@@ -45,4 +45,16 @@ public interface AppConstant {
     String DIFANGTAI = "3"; //地方台
     String CIBN = "4";
     String TESETAI = "5"; //特色台
+
+    public static final int PV_PLAYER__Auto = 0;
+    public static final int PV_PLAYER__AndroidMediaPlayer = 1;
+    public static final int PV_PLAYER__IjkMediaPlayer = 2;
+    public static final int PV_PLAYER__IjkExoMediaPlayer = 3;
+
+    /**
+     * 解码方式
+     */
+    int MEDIACODEC = 0; //软件解码
+    int VCODE = 1; //硬件解码
 }
+

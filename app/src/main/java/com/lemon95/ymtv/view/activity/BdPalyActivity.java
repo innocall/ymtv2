@@ -397,19 +397,6 @@ public class BdPalyActivity extends BaseActivity implements BVideoView.OnPrepare
               //  LogUtils.e("网速", i / 1024 + "kb/s");
             }
         });
-      /*  mVV.setOnPositionUpdateListener(new BVideoView.OnPositionUpdateListener() {
-            @Override
-            public boolean onPositionUpdate(long l) {
-                //  LogUtils.e("接收当前播放时长的回调函数接口定义", l/1000 + "s");
-                return false;
-            }
-        });*/
-       /* mVV.setOnSeekCompleteListener(new BVideoView.OnSeekCompleteListener() {
-            @Override
-            public void onSeekComplete() {
-                LogUtils.e("----","跳位置");
-            }
-        });*/
         mainWheelView.setOnWheelItemSelectedListener(new WheelView.OnWheelItemSelectedListener() {
             @Override
             public void onItemSelected(int position, Object o) {

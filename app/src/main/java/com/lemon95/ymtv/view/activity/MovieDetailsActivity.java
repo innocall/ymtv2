@@ -1,5 +1,6 @@
 package com.lemon95.ymtv.view.activity;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.graphics.drawable.ColorDrawable;
@@ -338,7 +339,8 @@ public class MovieDetailsActivity extends BaseActivity implements View.OnClickLi
                     }
                     bundle.putString("videoType", videoType);
                   //  startActivity(PlayActivity.class,bundle);
-                    startActivity(BdPalyActivity.class,bundle);
+                  //  startActivity(BdPalyActivity.class,bundle);
+                    startActivity(IjkPlayerActivity.class,bundle);
                     break;
                 case R.id.details_serial:
                     //选择剧集
