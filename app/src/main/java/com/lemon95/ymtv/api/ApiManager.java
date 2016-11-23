@@ -48,13 +48,20 @@ public class ApiManager {
   //  private static final String ENDPOINT = "http://121.40.187.98:82";
   //  private static final String ENDPOINT = "http://video.lemon95.com";
     private static final String ENDPOINT = "http://api.lemon95.com";
- //   private static String SecretKey = "123456789";
- //   private static String AppKey = "com.lemon95.lemonvideo";
+
+    /**
+     * 切换版本时注意
+     * 1、切换key值
+     * 2、切换app升级地址
+     * 3、切换app名称
+     */
     //影檬渠道
-//    private static String SecretKey = "ec8b570ad4bd403783c52ecb5cdfa849";
-//    private static String AppKey = "ym";
-    private static String SecretKey = "93889779174344df9260fc98a488ecdb";
-    private static String AppKey = "1260627197";
+    private static String SecretKey = "ec8b570ad4bd403783c52ecb5cdfa849";
+    private static String AppKey = "ym";
+
+    //物业正规渠道
+    //private static String SecretKey = "93889779174344df9260fc98a488ecdb";
+    //private static String AppKey = "1260627197";
 
     public static Gson getGson() {
         Gson gson = new GsonBuilder()

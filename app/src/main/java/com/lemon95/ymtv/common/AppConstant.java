@@ -6,7 +6,8 @@ package com.lemon95.ymtv.common;
 public interface AppConstant {
 
     //String RESOURCE = "http://app.lemon95.com:8011/"; //资源地址前部分
-    String VERSIONURL = "http://acadmin.lemon95.com:12345/App/Android/TV/Upgrade.xml"; //版本更新地址
+    //String VERSIONURL = "http://acadmin.lemon95.com:12345/App/Android/TV/Upgrade.xml"; //正规渠道版本更新地址
+    String VERSIONURL = "http://acadmin.lemon95.com:12345/App/Android/TV01/Upgrade.xml"; //自己（影檬）版本更新地址
     String RESOURCE = "http://tupian.lemon95.com:8088/"; //资源地址前部分
    // String RESOURCE = "http://img.lemon95.com/"; //高防
 
