@@ -7,7 +7,7 @@ import android.util.Log;
  * 日志输出
  */
 public class LogUtils {
-    private static boolean param = true;
+    private static boolean param = false;
 
     public static void i(String tag, String msg) {
         if (param) {

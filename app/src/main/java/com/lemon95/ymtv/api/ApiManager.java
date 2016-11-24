@@ -54,14 +54,15 @@ public class ApiManager {
      * 1、切换key值
      * 2、切换app升级地址
      * 3、切换app名称
+     * 4、关闭日志
      */
     //影檬渠道
-    private static String SecretKey = "ec8b570ad4bd403783c52ecb5cdfa849";
-    private static String AppKey = "ym";
+//    private static String SecretKey = "ec8b570ad4bd403783c52ecb5cdfa849";
+//    private static String AppKey = "ym";
 
     //物业正规渠道
-    //private static String SecretKey = "93889779174344df9260fc98a488ecdb";
-    //private static String AppKey = "1260627197";
+    private static String SecretKey = "93889779174344df9260fc98a488ecdb";
+    private static String AppKey = "1260627197";
 
     public static Gson getGson() {
         Gson gson = new GsonBuilder()
@@ -73,7 +74,8 @@ public class ApiManager {
     public static OkHttpClient genericClient() {
         // Log信息
         HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
-        loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+       // loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+        loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.NONE);  //关闭日志
 
         OkHttpClient httpClient = new OkHttpClient.Builder().readTimeout(60, TimeUnit.MINUTES)
                 .connectTimeout(60, TimeUnit.MINUTES).writeTimeout(60, TimeUnit.MINUTES) //设置超时

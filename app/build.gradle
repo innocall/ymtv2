@@ -20,14 +20,14 @@ android {
         }
     }
     //多渠道打包，生产不同版本的app
-    productFlavors {
-        all32 { minSdkVersion 17 }
-        all64 { minSdkVersion 17 }
+   // productFlavors {
+        //all32 { minSdkVersion 17 }
+       // all64 { minSdkVersion 17 }
         // armv5 {}
         // armv7a {}
         // arm64 { minSdkVersion 21 }
         // x86 {}
-    }
+  //  }
     splits {
         //根据手机系统拆分
         abi {
