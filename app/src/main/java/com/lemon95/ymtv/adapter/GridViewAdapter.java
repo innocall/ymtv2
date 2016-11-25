@@ -35,6 +35,7 @@ public class GridViewAdapter extends BaseAdapter {
                 .showStubImage(R.drawable.lemon_details_small_def)          // 设置图片下载期间显示的图片
                 .showImageForEmptyUri(R.drawable.lemon_details_small_def)  // 设置图片Uri为空或是错误的时候显示的图片
                 .showImageOnFail(R.drawable.lemon_details_small_def)       // 设置图片加载或解码过程中发生错误显示的图片
+                .cacheInMemory(true)
                 .build();                                   // 创建配置过得DisplayImageOption对象
     }
 

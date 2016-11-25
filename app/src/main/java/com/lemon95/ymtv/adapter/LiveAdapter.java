@@ -66,7 +66,10 @@ public class LiveAdapter extends BaseAdapter {
             holder.lemon95_menu_item.setText(channel.name);
             Epg next = channel.currentEpg;
             if (next != null && StringUtils.isNotBlank(next.name)) {
+                holder.lemon95_menu_item_next.setVisibility(View.VISIBLE);
                 holder.lemon95_menu_item_next.setText("正在播放：" + next.name);
+            } else {
+                holder.lemon95_menu_item_next.setVisibility(View.INVISIBLE);
             }
         }
         return convertView;

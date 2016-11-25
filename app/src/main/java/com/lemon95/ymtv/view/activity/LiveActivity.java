@@ -1,12 +1,14 @@
 package com.lemon95.ymtv.view.activity;
 
 import android.content.Context;
+import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.Settings;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -27,16 +29,21 @@ import com.lemon95.ymtv.bean.LiveType;
 import com.lemon95.ymtv.common.AppConstant;
 import com.lemon95.ymtv.myview.LoadingView;
 import com.lemon95.ymtv.myview.MsgView;
+import com.lemon95.ymtv.myview.media.IjkVideoView;
 import com.lemon95.ymtv.presenter.LivePresenter;
 import com.lemon95.ymtv.utils.LogUtils;
+import com.lemon95.ymtv.utils.StringUtils;
 import com.lemon95.ymtv.utils.ToastUtils;
 import com.starschina.abs.media.ThinkoPlayerListener;
 import com.starschina.media.ThinkoEnvironment;
 import com.starschina.media.ThinkoPlayerView;
 import com.starschina.types.DChannel;
+import com.starschina.types.Epg;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import tv.danmaku.ijk.media.player.IjkMediaPlayer;
 
 /**
  * Created by wuxiaotie on 2016/10/24.
@@ -63,6 +70,9 @@ public class LiveActivity extends BaseActivity {
     private DChannel[] channellist; //CIBN接口获取全部
     private List<LiveType> list = new ArrayList<>();
     private View oldViewLeft;
+    private RelativeLayout video_relat;
+    private  int width = 0 , height = 0;
+    private int i = 0;
             //,oldViewLeft2;
     //private String text = "全部";
     private int meun1 = 0;
@@ -100,6 +110,9 @@ public class LiveActivity extends BaseActivity {
     protected int getLayoutId() {
         //直播初始化
         try{
+            //初始化媒体播放器
+            IjkMediaPlayer.loadLibrariesOnce(null);
+            IjkMediaPlayer.native_profileBegin("libijkplayer.so");
             ThinkoEnvironment.setUp(getApplicationContext());
         }catch(IllegalArgumentException e){
             LogUtils.e("----","live appkey is null");
@@ -109,20 +122,27 @@ public class LiveActivity extends BaseActivity {
 
     @Override
     protected void setupViews() {
+        DisplayMetrics metric = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(metric);
+        width = metric.widthPixels;  // 屏幕宽度（像素）
+        height = metric.heightPixels;  // 屏幕高度（像素）
         lemon95_menu = (DrawerLayout) findViewById(R.id.lemon95_menu);
         lemon95_menu_left = (LinearLayout) findViewById(R.id.lemon95_menu_left);
         left_drawer = (ListViewTV) findViewById(R.id.left_drawer);
         left_drawer2 = (ListViewTV) findViewById(R.id.left_drawer2);
         lemon95_loads = (RelativeLayout) findViewById(R.id.lemon95_loads);
+        video_relat = (RelativeLayout) findViewById(R.id.video_relat);
         meun1 = getIntent().getIntExtra("meun1", 0);
         left_drawer.setItemsCanFocus(true);
         left_drawer.requestFocus();
         mPlayerView = new ThinkoPlayerView(this);
         RelativeLayout.LayoutParams lp22 = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
+//        RelativeLayout.LayoutParams lp22 = new RelativeLayout.LayoutParams(
+//                dip2px(this, width), dip2px(this, height));
         mPlayerView.setLayoutParams(lp22);
         player = ((RelativeLayout)findViewById(R.id.player));
         player.addView(mPlayerView);
-       // mPlayerView.setPlayerSize(480, 300);
+        //mPlayerView.setPlayerSize(width, height);
         mPlayerView.setPlayerListener(mListener);
         lemon95_menu.setDrawerListener(drawerLister);
         left_drawer.setPoint(meun1);
@@ -249,6 +269,7 @@ public class LiveActivity extends BaseActivity {
         left_drawer.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                i = position;
                 left_drawer.setPoint(position);
                 left_drawer2.setPoint(0);
                 LiveType liveType = list.get(position);
@@ -399,7 +420,6 @@ public class LiveActivity extends BaseActivity {
         } else if (keyCode ==KeyEvent.KEYCODE_DPAD_LEFT) {
             boolean isOpen = lemon95_menu.isDrawerOpen(lemon95_menu_left);
             if (!isOpen) {
-                int i = left_drawer.getSelectedItemPosition();
                 int position = left_drawer2.getSelectedItemPosition();
                 try {
                     if (i == 0) {
@@ -459,7 +479,6 @@ public class LiveActivity extends BaseActivity {
         }else if (keyCode ==KeyEvent.KEYCODE_DPAD_RIGHT) {
             boolean isOpen = lemon95_menu.isDrawerOpen(lemon95_menu_left);
             if (!isOpen) {
-                int i = left_drawer.getSelectedItemPosition();
                 int position = left_drawer2.getSelectedItemPosition();
                 try {
                     if (i == 0) {
@@ -625,7 +644,21 @@ public class LiveActivity extends BaseActivity {
                         startPlay(channellist3, 0);
                     }
                 } else if (AppConstant.DIFANGTAI.equals(type)) {
-                    setChannel(channellist4,datas);
+                    DChannel dChannel1 = new DChannel();
+                    dChannel1.id = 5555;
+                    dChannel1.name = "黔南1台";
+                    Epg epg = new Epg();
+                    epg.name = "";
+                    dChannel1.nextEpg = epg;
+                    dChannel1.currentEpg = epg;
+                    channellist4.add(dChannel1);
+                    DChannel dChannel2 = new DChannel();
+                    dChannel2.id = 6666;
+                    dChannel2.nextEpg = epg;
+                    dChannel2.currentEpg = epg;
+                    dChannel2.name = "黔南2台";
+                    channellist4.add(dChannel2);
+                    setChannel(channellist4, datas);
                     if (state == 1) {
                         //第一次进来
                         startPlay(channellist4,0);
@@ -651,31 +684,100 @@ public class LiveActivity extends BaseActivity {
         }
     }
 
+    public void portrait(boolean isBig){
+//        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+//        getWindow().clearFlags(
+//                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        RelativeLayout.LayoutParams lp;
+        if (isBig) {
+            lp = new RelativeLayout.LayoutParams(
+                    dip2px(this, 2), dip2px(this, 1));
+            mPlayerView.setLayoutParams(lp);
+            mPlayerView.setPlayerSize(2, 1);
+        } else {
+            width = player.getWidth();
+            height = player.getHeight();
+            if (width == 0) {
+                lp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
+            } else {
+                lp = new RelativeLayout.LayoutParams(
+                        dip2px(this, width), dip2px(this, height));
+            }
+            mPlayerView.setLayoutParams(lp);
+            mPlayerView.setPlayerSize(width, height);
+        }
+//        int a = mPlayerView.getWidth();
+//        int b = mPlayerView.getHeight();
+//        int c = lp.width;
+//        int d = lp.height;
+      //  LogUtils.e(TAG + "-----------", a + ";" + b + ";" + c + ";" + d + ";" + width + ";" + height);
+    }
+
     /**
      * 播放视频
      * @param list
      * @param i
      */
+    private boolean isParams = false;
     public void startPlay(List<DChannel> list,int i) {
         DChannel dChannel = list.get(i);
         if (dChannel != null) {
             mPlayerView.stop();
-            mPlayerView.prepareToPlay(dChannel.id, dChannel.name);
-            String next = "";
-            if (dChannel.nextEpg != null) {
-                next = dChannel.nextEpg.name;
+            if (dChannel.id == 5555 || dChannel.id == 6666) {
+                //黔南1台 采用我们自己的播放器
+                video_relat.setVisibility(View.VISIBLE);
+                isParams = true;
+                portrait(true);
+                initIjkPlayer(dChannel.id);
+            } else {
+                if (mVideoView != null) {
+                    mVideoView.pause();
+                    video_relat.setVisibility(View.GONE);
+                }
+                mPlayerView.prepareToPlay(dChannel.id, dChannel.name);
+                if (isParams) {
+                    isParams = false;
+                    portrait(false);
+                }
+                String next = "";
+                if (dChannel.nextEpg != null) {
+                    next = dChannel.nextEpg.name;
+                }
+                String news = "";
+                if (dChannel.currentEpg != null) {
+                    news = dChannel.currentEpg.name;
+                }
+                msgView.isPuase(false);
+                if (StringUtils.isBlank(news)) {
+                    news = dChannel.name;
+                }
+                msgView.setMsg(news,next);
+                msgView.setVisibility(View.VISIBLE);
+                handler.postDelayed(runnable2, 8000);
             }
-            String news = "";
-            if (dChannel.currentEpg != null) {
-                news = dChannel.currentEpg.name;
-            }
-            msgView.isPuase(false);
-            msgView.setMsg(news,next);
-            msgView.setVisibility(View.VISIBLE);
-            handler.postDelayed(runnable2, 8000);
         }
 
     }
+
+    private IjkVideoView mVideoView;
+    /**
+     * 初始化自己播放器
+     * @param id
+     */
+    private void initIjkPlayer(int id) {
+        mVideoView = (IjkVideoView) findViewById(R.id.video_view);
+        mVideoView.toggleAspectRatio(1);
+       // mVideoView.setVisibility(View.VISIBLE);
+        if (id == 5555) {
+            mVideoView.setVideoPath("http://gzqn.chinashadt.com:1936/live/qntv5.stream/playlist.m3u8");
+        } else if (id == 6666) {
+            mVideoView.setVideoPath("http://gzqn.chinashadt.com:1936/live/qntv2.stream/playlist.m3u8");
+            //http://gzqn.chinashadt.com:1936/live/qntv3.stream/playlist.m3u8
+            //http://gzqn.chinashadt.com:1936/live/qntv2.stream/playlist.m3u8
+        }
+        mVideoView.start();
+    }
+
     private void setChannel(List<DChannel> channel,List<Live.Data> datas) {
         for (int i = 0;i<datas.size();i++) {
             for (int j=0; j<channellist.length;j++) {
@@ -716,7 +818,21 @@ public class LiveActivity extends BaseActivity {
         super.onDestroy();
         //sdk释放
         LogUtils.e(TAG,"释放SDK");
+        if (mVideoView != null) {
+            mVideoView.stopPlayback();
+            mVideoView.destroyDrawingCache();
+            //mVV = null;
+        }try {
+            IjkMediaPlayer.native_profileEnd();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         mPlayerView.release();
         ThinkoEnvironment.tearDown();
+    }
+
+    public int dip2px(Context context, float dpValue) {
+        final float scale = context.getResources().getDisplayMetrics().density;
+        return (int) (dpValue * scale + 0.5f);
     }
 }

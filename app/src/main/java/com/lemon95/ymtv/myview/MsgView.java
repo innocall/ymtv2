@@ -31,11 +31,8 @@ public class MsgView extends RelativeLayout {
     public void setMsg(String news,String next) {
         TextView lemon95_new = (TextView)loadingView.findViewById(R.id.lemon95_new);
         TextView lemon95_next = (TextView)loadingView.findViewById(R.id.lemon95_next);
-
         lemon95_new.setText("正在播放：" + news);
         lemon95_next.setText("即将播放：" + next);
-
-
     }
 
     public void isPuase(boolean isView) {

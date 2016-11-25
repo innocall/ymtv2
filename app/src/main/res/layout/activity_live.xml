@@ -14,6 +14,19 @@
 
     </RelativeLayout>
 
+    <RelativeLayout
+        android:id="@+id/video_relat"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone">
+
+        <com.lemon95.ymtv.myview.media.IjkVideoView
+            android:id="@+id/video_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"></com.lemon95.ymtv.myview.media.IjkVideoView>
+    </RelativeLayout>
+
     <include layout="@layout/live_load"></include>
 
     <LinearLayout
@@ -69,6 +82,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_gravity="center"
+                android:layout_marginBottom="@dimen/px20"
+                android:layout_marginTop="@dimen/px190"
                 android:background="@null"
                 android:descendantFocusability="afterDescendants"
                 android:focusable="true"
@@ -76,8 +91,6 @@
                 android:listSelector="@null"
                 android:nextFocusRight="@+id/gridView"
                 android:nextFocusUp="@+id/lemon_search"
-                android:layout_marginTop="@dimen/px190"
-                android:layout_marginBottom="@dimen/px20"
                 android:scrollbars="none"></com.lemon95.androidtvwidget.view.ListViewTV>
         </LinearLayout>
     </LinearLayout>
